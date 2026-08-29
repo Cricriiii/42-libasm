@@ -3,9 +3,9 @@
 # ---------------------------------------------------------------------------- #
 
 NAME	:= libasm
-INC_DIR	:= $(NAME)/include
-SRC_DIR	:= $(NAME)/source
-OBJ_DIR	:= $(NAME)/.object
+INC_DIR	:= include
+SRC_DIR	:= source
+OBJ_DIR	:= .object
 ARCHIVE	:= $(NAME).a
 
 FILES	:= $(shell find $(SRC_DIR) -type f -wholename '*.asm')
