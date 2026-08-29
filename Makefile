@@ -22,7 +22,7 @@ all: $(NAME)
 $(NAME): $(OBJS)
 	ar rcs $(ARCHIVE) $(OBJS)
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.asm
+$(OBJS): $(FILES)
 	@mkdir -p $(OBJ_DIR)
 	nasm -f elf64 -g3 -F dwarf $< -o $@
 
