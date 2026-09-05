@@ -34,6 +34,6 @@ ft_strcpy:
     jmp .copy           ; Loop
 
 .done:
-    mov rax, rdx        ; Store destination pointer in RAX in accordance to
-                        ; System V ABI requirements
+    mov rax, rdx        ; Store destination pointer in RAX
+                        ; in accordance with System V ABI requirements
     ret                 ; Return

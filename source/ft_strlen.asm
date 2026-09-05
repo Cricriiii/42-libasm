@@ -32,5 +32,6 @@ ft_strlen:
                       ; RDI is now located one byte after null byte.
     dec rdi           ; Make it point to the null character.
     sub rdi, rdx      ; Subtract start position from end position.
-    mov rax, rdi      ; Save length in RAX according to System V ABI.
+    mov rax, rdi      ; Save string length in RAX
+                      ; in accordance with System V ABI requirements.
     ret               ; Return to caller.
