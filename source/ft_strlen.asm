@@ -8,7 +8,7 @@
 
 SECTION .text
 
-global ft_strlen      ; Make ft_strlen visible from the exterior
+global ft_strlen      ; Make ft_strlen calable / visible from outside
 
 ft_strlen:
     xor rax, rax      ; Set searched byte value (0) in AL as expected by SCASB.

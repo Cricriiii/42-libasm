@@ -51,7 +51,7 @@ re:
 ## Build the tester
 test:
 	+$(MAKE) all
-	+$(MAKE) -C ./tester all
+	+$(MAKE) -C $(TESTER_DIR) all
 
 
 # ---------------------------------------------------------------------------- #
