@@ -20,7 +20,7 @@ global ft_strcpy    ; Make ft_strcopy callable / visible from outside
 
 ft_strcpy:
     xor rax, rax    ; Initializing the RAX register for imminent use
-;    mov rcx, -1    ; Not setting the RCX counter as strcpy only stops
+;   mov rcx, -1     ; Not setting the counter as strcpy only stops
                     ; at the first null bytes in src
     mov rdx, rdi    ; Saving dst string address as return value
 
