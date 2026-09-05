@@ -2,39 +2,58 @@
 # compile                                                                      #
 # ---------------------------------------------------------------------------- #
 
-ASM_CMP		:= nasm
-C_CMP		:= cc
-CFLAGS		:= -std=c23 -g3
+CC			:= cc
+CFLAGS		:= -std=c23 -Wall -Wextra -Werror -g3
 
 
 # ---------------------------------------------------------------------------- #
 # files                                                                        #
 # ---------------------------------------------------------------------------- #
 
-NAME		:= libasm
-INC_DIR		:= include
-SRC_DIR		:= source
-OBJ_DIR		:= .object
-LIBASM_A	:= $(NAME).a
+LIBASM_A  := libasm.a
 
-FILES	:= $(shell find $(SRC_DIR) -type f -wholename '*.asm')
-OBJS	:= $(patsubst $(SRC_DIR)/%.asm, $(OBJ_DIR)/%.o, $(FILES))
+INC_DIR	:= include
+
+RUNNER_SRC_DIR	:= source
+RUNNER_OBJ_DIR	:= .object
+RUNNER_EXE_DIR	:= executable
+
+TEST_SRC_DIR	:= $(RUNNER_SRC_DIR)/test
+TEST_OBJ_DIR	:= $(RUNNER_OBJ_DIR)/test
+TEST_EXE_DIR	:= $(RUNNER_EXE_DIR)/test
+
+RUNNER_NAME		:= libasm_tester
+RUNNER_SRC		:= $(RUNNER_SRC_DIR)/$(RUNNER_NAME).c
+RUNNER_OBJ		:= $(RUNNER_OBJ_DIR)/$(RUNNER_NAME).o
+RUNNER_EXE		:= $(RUNNER_NAME)
+
+TEST_SRC		:= $(shell find $(TEST_SRC_DIR) -type f -wholename '*.c')
+TEST_OBJ		:= $(patsubst $(TEST_SRC_DIR)/%.c, $(TEST_OBJ_DIR)/%.o, $(TEST_SRC))
+TEST_EXE		:= $(patsubst $(TEST_SRC_DIR)/%.c, $(TEST_EXE_DIR)/%, $(TEST_SRC))
 
 
 # ---------------------------------------------------------------------------- #
 # make                                                                         #
 # ---------------------------------------------------------------------------- #
 
-## Build libasm.a
-all: $(NAME)
+## Build the tester
+all: $(RUNNER_EXE) $(TEST_EXE)
 
-$(NAME): $(OBJS)
-	ar rcs $(LIBASM_A) $(OBJS)
+$(RUNNER_EXE): $(RUNNER_SRC)
+	@cp ../$(LIBASM_A) .
+	@mkdir -p $(RUNNER_OBJ_DIR)
+	@mkdir -p $(RUNNER_EXE_DIR)
+	$(CC) $(CFLAGS) -c $(RUNNER_SRC) -o $(RUNNER_OBJ)
+	$(CC) $(CFLAGS) $(RUNNER_OBJ) -o $(RUNNER_EXE)
 
+$(TEST_EXE_DIR)/%: $(TEST_OBJ_DIR)/%.o $(LIBASM_A)
+	$(CC) $(CFLAGS) -I $(INC_DIR) $< $(LIBASM_A) -o $@
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.asm
-	@mkdir -p $(OBJ_DIR)
-	$(ASM_CMP) -f elf64 -g3 -F dwarf $< -o $@
+$(TEST_OBJ_DIR)/%.o: $(TEST_SRC_DIR)/%.c
+	@cp ../$(LIBASM_A) .
+	@mkdir -p $(TEST_OBJ_DIR)
+	@mkdir -p $(TEST_EXE_DIR)
+	$(CC) $(CFLAGS) -I $(INC_DIR) -c $< -o $@
 
 ## Call 'fclean' and 'all' targets
 re:
@@ -43,28 +62,20 @@ re:
 
 
 # ---------------------------------------------------------------------------- #
-# test                                                                         #
-# ---------------------------------------------------------------------------- #
-
-## Build the tester
-test:
-	+$(MAKE) all
-	+$(MAKE) -C ./tester all
-
-
-# ---------------------------------------------------------------------------- #
 # clean                                                                        #
 # ---------------------------------------------------------------------------- #
 
 ## Delete the object folder
 clean:
-	rm -rf $(OBJ_DIR)
+	@rm -rf $(RUNNER_OBJ_DIR)
 
-## Call 'clean' and delete the libasm.a file
+
+## Call 'clean' and delete all executables and archive files
 fclean:
 	+$(MAKE) clean
-	rm -f $(LIBASM_A)
-
+	@rm -rf $(RUNNER_EXE_DIR)
+	@rm -f $(LIBASM_A)
+	@rm -f $(RUNNER_EXE)
 
 
 # ---------------------------------------------------------------------------- #
@@ -86,5 +97,6 @@ help:
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 	@echo
 
+.PHONY: all re test clean c fclean fc
 
-.PHONY: all re test clean fclean help
+.SECONDARY: $(RUNNER_OBJ) $(TEST_OBJ)
