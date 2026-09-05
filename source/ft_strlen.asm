@@ -5,6 +5,11 @@
 ;   Author          : Christophe Gajean
 ;   Description     : Assembly implementation of man 3 strlen
 ;
+;
+;   Prototype       : size_t strlen(const char *s);
+;
+;   Registers       : RDI -> char *restrict dst
+
 
 SECTION .text
 

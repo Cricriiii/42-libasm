@@ -5,10 +5,10 @@
 ;   Author          : Christophe Gajean
 ;   Description     : Assembly implementation of man 3 strcpy
 ;                     based on the libc prototype.
-
+;
 ;   Prototype       : char *strcpy(char *restrict dst, 
 ;                                    const char *restrict src);
-
+;
 ;   Registers       : RDI -> char *restrict dst
 ;                     RSI -> const char *restrict src
 
