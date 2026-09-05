@@ -16,6 +16,8 @@ INC_DIR		:= include
 SRC_DIR		:= source
 OBJ_DIR		:= .object
 LIBASM_A	:= $(NAME).a
+TESTER_DIR	:= tester
+TESTER		:= $(TESTER_DIR)/$(NAME)_tester
 
 FILES	:= $(shell find $(SRC_DIR) -type f -wholename '*.asm')
 OBJS	:= $(patsubst $(SRC_DIR)/%.asm, $(OBJ_DIR)/%.o, $(FILES))
@@ -63,6 +65,7 @@ clean:
 ## Call 'clean' and delete the libasm.a file
 fclean:
 	+$(MAKE) clean
+	+$(MAKE) -C $(TESTER_DIR) fclean
 	rm -f $(LIBASM_A)
 
 
