@@ -1,0 +1,81 @@
+;   Executable      : ft_strdup
+;   Version         : 1.0
+;   Created date    : 2026-09-07
+;   Last update     : 2026-09-07
+;   Author          : Christophe Gajean
+;   Description     : Assembly implementation of man 2 read
+;                     based on the libc prototype.
+;
+;   Prototype       : char *strdup(const char *s);
+;
+;   Registers       : RDI -> const char *s
+
+SECTION .bss        ; Section containing uninitialized values
+    NewStr resq 1   ; Reserve 8 bytes for the new string address
+
+SECTION .text       ; Section containing code
+
+extern __errno_location ; Included by <errno.h>
+                        ; int * __errno_location(void);
+                        ; Returns a pointer to errno
+
+extern malloc       ; Included by <stdlib.h>
+                    ; void *malloc(size_t size);
+                    ; Returns a pointer to the beginning of
+                    ; the allocated memory zone
+
+extern ft_strlen    ; Included in this librairie
+extern ft_strcpy    ; Included in this librairie
+
+global ft_strdup    ; Make ft_strdup callable / visible from outside
+
+ft_strdup:
+    push rbp        ; Create the stack frame
+    mov rbp, rsp
+    sub rsp, 0x20   ; Adjust the stack frame to 32 bytes
+
+; Set aside the source string 's' address
+    mov qword [rbp-0x8], rdi    ; Save the address into the stack
+    ;push rax        ; Dummy value for 16-bytes alignment
+    ;push rdi        ; Set aside the source string 's' address    
+
+; Calculate the string length with ft_strlen
+    call ft_strlen  ; Call ft_strlen on the address of string s
+                    ; already stored in RDI
+                    ; Return value in RAX
+
+; Allocate a new string with malloc
+    mov rdi, rax    ; Set malloc 'size' argument to the length of 's'
+    inc rdi         ; Make room for the null character (0)
+    call malloc wrt ..plt   ; Allocate memory
+
+; Test malloc return value for errors
+    cmp rax, 0      ; RAX contains malloc return value
+    jz .error       ; Error (RAX=0), null pointer has been returned
+                    ; Jump to the error sequence
+
+; Copy the old string data into the new string with ft_strcpy
+    mov rdi, rax    ; RAX contains the new string address
+    mov rsi, qword [rbp-0x8]     ; RBP-0x8 contains the source string address
+    call ft_strcpy  ; Copy source string into destination string
+                    ; Returns the destination string address in RAX
+                    ; in accordance with System V ABI requirements
+
+; Return sequence
+.return:
+    leave           ; Destroy the stack frame
+    ret             ; Return
+
+; Error sequence
+.error:
+    neg rax                    ; Get the absolute value of errno
+    mov qword [rbp-0x10], rax  ; Set aside the errno value in stack
+
+    call __errno_location wrt ..plt ; Get errno memory address
+    lea r9, [rbp-0x10]  ; Store in R9 the address of the saved errno value
+    mov r8, [r9]        ; Store the saved errno value in R8
+    mov [rax], r8       ; Set errno value
+
+    mov rax, 0      ; Store a null pointer in RAX before return
+                    ; in accordance with System V ABI requirements
+    jmp .return     ; Jump to the return sequence

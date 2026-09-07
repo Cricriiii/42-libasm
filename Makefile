@@ -19,8 +19,8 @@ LIBASM_A	:= $(NAME).a
 TESTER_DIR	:= tester
 TESTER		:= $(TESTER_DIR)/$(NAME)_tester
 
-FILES	:= $(shell find $(SRC_DIR) -type f -wholename '*.s')
-OBJS	:= $(patsubst $(SRC_DIR)/%.s, $(OBJ_DIR)/%.o, $(FILES))
+FILES	:= $(shell find $(SRC_DIR) -type f -wholename '*.asm')
+OBJS	:= $(patsubst $(SRC_DIR)/%.asm, $(OBJ_DIR)/%.o, $(FILES))
 
 
 # ---------------------------------------------------------------------------- #
@@ -34,7 +34,7 @@ $(NAME): $(OBJS)
 	ar rcs $(LIBASM_A) $(OBJS)
 
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.s
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.asm
 	@mkdir -p $(OBJ_DIR)
 	$(ASM_CMP) -f elf64 -g3 -F dwarf $< -o $@
 
