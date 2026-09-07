@@ -51,8 +51,8 @@ set_errno:
                                     ; '..plt' does so.
 
     lea r9, [rbp-0x4]   ; Calculate and store the stack address of errno
-    mov r8, [r9]        ; Fetch the errno value and store it in r8
-    mov [rax], r8       ; Set the errno value
+    mov r8d, [r9]       ; Fetch the errno value and store it in r8
+    mov dword [rax], r8d      ; Set the errno value
 
 ; Return
     leave
