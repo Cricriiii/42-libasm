@@ -14,15 +14,14 @@
 
 SECTION .text
 
-extern __errno_location ; Included by <errno.h>
-                        ; int * __errno_location(void);
-                        ; Returns a pointer to errno
+extern set_errno    ; Included in ./source/common
 
 global ft_read      ; Make ft_read callable / visible from outside
 
 ft_read:
-    push rbp        ; Create the stack frame
-    mov rbp, rsp
+; Create the stack frame
+    push rbp        ; Alignment prologue
+    mov rbp, rsp    ; Anchor the base pointer at the stack position
 
     mov rax, 0      ; Specify the sys_read syscall
     syscall         ; Make the kernel call
@@ -30,22 +29,15 @@ ft_read:
     cmp rax, 0      ; Check syscall return value
     jl .error       ; If error (RAX<0), jump to the error sequence
 
-    mov rax, rdx    ; Success, ft_read will return 'count' in RAX
-    jmp .return     ; Jump to the return sequence
-
-.error:
-    neg rax         ; Make errno resulting
-                    ; from the previous syscall positive
-
-    mov rcx, rax    ; Set errno aside in the unused RCX register
-    call __errno_location wrt ..plt ; Call __errno location through
-                    ; the Procedure Linkage table.
-                    ; Returns with errno address stored in RAX
-                    ; See comments in ft_write.s
-
-    mov [rax], rcx  ; Set errno
-    mov rax, -1     ; Set ft_write return value to error (-1)
-
+; Success and fail paths: RAX contains the number of written bytes
 .return:
     leave           ; Destroy the stack frame
-    ret             ; Return
+    ret
+
+.error:
+    mov rdi, rax    ; Prepare call of set_errno with raw errno value
+    call set_errno  ; Set errno value
+
+    mov rax, -1     ; Set ft_write return value
+    jmp .return     ; Jump to the return sequence
+

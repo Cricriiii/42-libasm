@@ -1,7 +1,7 @@
 ;   Executable      : ft_strcmp
 ;   Version         : 1.0
 ;   Created date    : 2026-09-05
-;   Last update     : 2026-09-05
+;   Last update     : 2026-09-07
 ;   Author          : Christophe Gajean
 ;   Description     : Assembly implementation of man 3 strcmp
 ;                     based on the libc prototype.
@@ -44,4 +44,4 @@ ft_strcmp:
     movzx ecx, byte [rsi]   ; Move current *s2 with zero-extend
     sub eax, ecx            ; Store return value (*s1-*s2) in EAX
                             ; in accordance with System V ABI requirements
-    ret                     ; Return
+    ret

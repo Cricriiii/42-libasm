@@ -19,13 +19,14 @@ extern __errno_location ; Included by <errno.h>
                         ; int * __errno_location(void);
                         ; Returns a pointer to errno
 
-extern set_errno
+extern set_errno        ; Included in ./source/common
 
 global ft_write     ; Make ft_write callable / visible from outside
 
 ft_write:
-    push rbp        ; Create the stack frame
-    mov rbp, rsp
+; Create the stack frame
+    push rbp        ; Alignment prologue
+    mov rbp, rsp    ; Anchor the base pointer at the stack position
 
     mov rax, 1      ; Specify sys_write syscall
     syscall         ; Make the kernel call
@@ -33,15 +34,14 @@ ft_write:
     cmp rax, 0      ; Check syscall return value
     jl .error       ; If error (RAX<0), jump to the error sequence
 
-; If success path, RAX already contains the number of written bytes
+; Success and fail paths: RAX contains the number of written bytes
 .return:
     leave           ; Destroy the stack frame
-    ;mov rsp, rbp   ; It is equivalent to
-    ;pop rbp        ;    
-    ret             ; Return
+    ret
 
 .error:
-    mov rdi, rax    ;
-    call set_errno  ;
+    mov rdi, rax    ; Prepare call of set_errno with raw errno value
+    call set_errno  ; Set errno value
+
     mov rax, -1     ; Set ft_write return value
-    call .return    ;
+    jmp .return     ; Jump to the return sequence

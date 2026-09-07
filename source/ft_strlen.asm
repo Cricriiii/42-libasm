@@ -34,4 +34,4 @@ ft_strlen:
     sub rdi, rdx      ; Subtract start position from end position
     mov rax, rdi      ; Save string length in RAX
                       ; in accordance with System V ABI requirements
-    ret               ; Return to caller
+    ret

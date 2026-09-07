@@ -15,29 +15,24 @@ SECTION .bss        ; Section containing uninitialized values
 
 SECTION .text       ; Section containing code
 
-extern __errno_location ; Included by <errno.h>
-                        ; int * __errno_location(void);
-                        ; Returns a pointer to errno
-
+extern ft_strlen    ; Included in /source/
+extern ft_strcpy    ; Included in /source/
+extern set_errno    ; Included in ./source/common
 extern malloc       ; Included by <stdlib.h>
                     ; void *malloc(size_t size);
                     ; Returns a pointer to the beginning of
                     ; the allocated memory zone
 
-extern ft_strlen    ; Included in this librairie
-extern ft_strcpy    ; Included in this librairie
-
 global ft_strdup    ; Make ft_strdup callable / visible from outside
 
 ft_strdup:
-    push rbp        ; Create the stack frame
-    mov rbp, rsp
-    sub rsp, 0x20   ; Adjust the stack frame to 32 bytes
+; Create the stack frame
+    push rbp        ; Alignment prologue
+    mov rbp, rsp    ; Anchor the base pointer at the stack position
+    sub rsp, 0x20   ; Move RSP 36 bytes away
 
 ; Set aside the source string 's' address
     mov qword [rbp-0x8], rdi    ; Save the address into the stack
-    ;push rax        ; Dummy value for 16-bytes alignment
-    ;push rdi        ; Set aside the source string 's' address    
 
 ; Calculate the string length with ft_strlen
     call ft_strlen  ; Call ft_strlen on the address of string s
@@ -61,20 +56,13 @@ ft_strdup:
                     ; Returns the destination string address in RAX
                     ; in accordance with System V ABI requirements
 
-; Return sequence
 .return:
     leave           ; Destroy the stack frame
-    ret             ; Return
+    ret
 
-; Error sequence
 .error:
-    neg rax                    ; Get the absolute value of errno
-    mov qword [rbp-0x10], rax  ; Set aside the errno value in stack
-
-    call __errno_location wrt ..plt ; Get errno memory address
-    lea r9, [rbp-0x10]  ; Store in R9 the address of the saved errno value
-    mov r8, [r9]        ; Store the saved errno value in R8
-    mov [rax], r8       ; Set errno value
+    mov rdi, rax    ; Prepare call of set_errno with raw errno value
+    call set_errno  ; Set errno value
 
     mov rax, 0      ; Store a null pointer in RAX before return
                     ; in accordance with System V ABI requirements

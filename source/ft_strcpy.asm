@@ -1,7 +1,7 @@
 ;   Executable      : ft_strcpy
 ;   Version         : 1.0
 ;   Created date    : 2026-09-05
-;   Last update     : 2026-09-05
+;   Last update     : 2026-09-07
 ;   Author          : Christophe Gajean
 ;   Description     : Assembly implementation of man 3 strcpy
 ;                     based on the libc prototype.
@@ -22,6 +22,8 @@ ft_strcpy:
     xor rax, rax    ; Initializing the RAX register for imminent use
 ;   mov rcx, -1     ; Not setting the counter as strcpy only stops
                     ; at the first null bytes in src
+                    ; Also, no REP mode for STOSB, so RCX would be
+                    ; manually decremented.
     mov rdx, rdi    ; Saving dst string address as return value
 
 .copy:
@@ -36,4 +38,4 @@ ft_strcpy:
 .done:
     mov rax, rdx        ; Store destination pointer in RAX
                         ; in accordance with System V ABI requirements
-    ret                 ; Return
+    ret
