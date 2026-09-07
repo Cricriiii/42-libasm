@@ -10,9 +10,6 @@
 ;
 ;   Registers       : RDI -> const char *s
 
-SECTION .bss        ; Section containing uninitialized values
-    NewStr resq 1   ; Reserve 8 bytes for the new string address
-
 SECTION .text       ; Section containing code
 
 extern ft_strlen    ; Included in /source/
