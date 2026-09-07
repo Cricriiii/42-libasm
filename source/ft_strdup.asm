@@ -53,7 +53,7 @@ ft_strdup:
                     ; Returns the destination string address in RAX
                     ; in accordance with System V ABI requirements
 
-.return:
+.epilogue:
     leave           ; Destroy the stack frame
     ret
 
@@ -63,4 +63,4 @@ ft_strdup:
 
     mov rax, 0      ; Store a null pointer in RAX before return
                     ; in accordance with System V ABI requirements
-    jmp .return     ; Jump to the return sequence
+    jmp .epilogue   ; Jump to the return sequence

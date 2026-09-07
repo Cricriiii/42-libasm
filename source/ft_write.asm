@@ -35,7 +35,7 @@ ft_write:
     jl .error       ; If error (RAX<0), jump to the error sequence
 
 ; Success and fail paths: RAX contains the number of written bytes
-.return:
+.epilogue:
     leave           ; Destroy the stack frame
     ret
 
@@ -44,4 +44,4 @@ ft_write:
     call set_errno  ; Set errno value
 
     mov rax, -1     ; Set ft_write return value
-    jmp .return     ; Jump to the return sequence
+    jmp .epilogue   ; Jump to the return sequence
