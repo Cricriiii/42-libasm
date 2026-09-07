@@ -14,12 +14,15 @@ CFLAGS		:= -std=c23 -g3
 NAME		:= libasm
 INC_DIR		:= include
 SRC_DIR		:= source
+COM_DIR		:= $(SRC_DIR)/common
 OBJ_DIR		:= .object
+OBJ_COM_DIR	:= $(OBJ_DIR)/common
 LIBASM_A	:= $(NAME).a
 TESTER_DIR	:= tester
 TESTER		:= $(TESTER_DIR)/$(NAME)_tester
 
 FILES	:= $(shell find $(SRC_DIR) -type f -wholename '*.asm')
+FILES	+= $(shell find $(COM_DIR) -type f -wholename '*.asm')
 OBJS	:= $(patsubst $(SRC_DIR)/%.asm, $(OBJ_DIR)/%.o, $(FILES))
 
 
@@ -36,6 +39,7 @@ $(NAME): $(OBJS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.asm
 	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(OBJ_COM_DIR)
 	$(ASM_CMP) -f elf64 -g3 -F dwarf $< -o $@
 
 ## Call 'fclean' and 'all' targets
