@@ -1,7 +1,7 @@
 ;   Executable      : ft_strlen
 ;   Version         : 1.0
 ;   Created date    : 2026-08-30
-;   Last update     : 2026-09-03
+;   Last update     : 2026-09-07
 ;   Author          : Christophe Gajean
 ;   Description     : Assembly implementation of man 3 strlen
 ;

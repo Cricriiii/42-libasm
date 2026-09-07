@@ -1,7 +1,7 @@
 ;   Executable      : ft_write
 ;   Version         : 1.0
 ;   Created date    : 2026-09-05
-;   Last update     : 2026-09-05
+;   Last update     : 2026-09-07
 ;   Author          : Christophe Gajean
 ;   Description     : Assembly implementation of man 2 write
 ;                     based on the libc prototype.
@@ -23,7 +23,7 @@ global ft_write     ; Make ft_write callable / visible from outside
 
 ft_write:
     push rbp        ; Create the stack frame
-    mov rbp, rsp    ;
+    mov rbp, rsp
 
     mov rax, 1      ; Specify sys_write syscall
     syscall         ; Make the kernel call
@@ -35,14 +35,14 @@ ft_write:
 ; This number was passed as 'count' in RDX
     mov rax, rdx    ; The value is stored in RAX
                     ; in accordance with System V ABI requirements
-    jmp .return     ; Return to the caller.
+    jmp .return     ; Return to the return sequence
 
 .error:
 ; https://man7.org/linux/man-pages/man2/intro.2.html
 ; On error, sys_write returns the negated errno value
 
     neg rax         ; Get the absolute value of errno
-    mov r8, rax     ; Set it aside in r8
+    mov rcx, rax    ; Set it aside in rcx
 
 ; https://www.tortall.net/projects/yasm/manual/html/objfmt-elf32-wrt.html
 ; https://www.segmentationfault.fr/linux/role-plt-got-ld-so/
@@ -69,10 +69,9 @@ ft_write:
                                      ; The WRT operator and the special symbol
                                      ; '..plt' does so.
                                      ;                                 
-    mov [rax], r8                    ; Set errno value as set aside in r8
+    mov [rax], rcx                   ; Set errno value as set aside in rcx
 
     mov rax, -1     ; Set ft_write return value
-    jmp .return     ; Return to the caller.
 
 .return:
     leave           ; Destroy the stack frame
