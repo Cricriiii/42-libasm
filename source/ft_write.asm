@@ -75,5 +75,7 @@ ft_write:
     jmp .return     ; Return to the caller.
 
 .return:
-    pop rbp         ; Destroy the stack frame
+    leave           ; Destroy the stack frame
+    ;mov rsp, rbp   ; It is equivalent to
+    ;pop rbp        ;    
     ret             ; Return
