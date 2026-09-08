@@ -4,9 +4,10 @@
 ; RETURNS           : (1) if duplicated is found, (0) otherwise
 ; MODIFIES          : Nothing
 ; CALL              : Nothing
-; DESCRIPTION       : Scans the string passed in RDI and looks for duplicated
+; DESCRIPTION       : Scans the string passed and looks for duplicated
 ;                     or forbidden characters and returns size_t base_length
 ; PROTOTYPE         : size_t assess_base(const char *base);
+; REGISTERS         : RDI -> Base string address
 ;------------------------------------------------------------------------------
 
 SECTION .data       ; Section containing initialized data
