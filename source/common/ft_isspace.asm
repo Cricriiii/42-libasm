@@ -38,9 +38,9 @@ ft_isspace:
 
                             ; Else, return true
 .true:
-    mov rax, 1              ; Set return value to true
+    mov eax, 1              ; Set return value to true
     ret
 
 .false:
-    mov rax, 0              ; Set return value to false
+    mov eax, 0              ; Set return value to false
     ret

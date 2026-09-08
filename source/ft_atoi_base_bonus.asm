@@ -53,7 +53,7 @@ ft_atoi_base:
 
 
 ; ;------------------------------------------------------------------------------
-; ; check_duplicated  : Looks for duplicated character
+; ; assess_base  : Looks for duplicated character
 ; ; UPDATED           : 2026-09-07
 ; ; RETURNS           : (1) if duplicated is found, (0) otherwise
 ; ; MODIFIES          : Nothing
@@ -66,9 +66,9 @@ ft_atoi_base:
 
 ; SECTION .text       ; Section containing code
 
-; global check_duplicated
+; global assess_base
 
-; check_duplicated:
+; assess_base:
 ;     cmp byte [rdi], 0   ; Test if string is complete (null character)
 ;     jz .false           ; If so, no duplicated character has been found
 
@@ -90,7 +90,7 @@ ft_atoi_base:
 
 ; .next_character:
 ;     inc rdi              ; Test the next character
-;     jmp check_duplicated ; Loop
+;     jmp assess_base ; Loop
 
 ; .true:
 ;     mov rax, 1
