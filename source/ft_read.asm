@@ -1,3 +1,4 @@
+;------------------------------------------------------------------------------
 ;   Executable      : ft_read
 ;   Version         : 1.0
 ;   Created date    : 2026-09-07
@@ -11,6 +12,8 @@
 ;   Registers       : RDI -> int fd
 ;                     RSI -> void buf[.count]
 ;                     RDX -> size_t count
+;------------------------------------------------------------------------------
+
 
 SECTION .text
 
@@ -40,4 +43,3 @@ ft_read:
 
     mov rax, -1     ; Set ft_write return value
     jmp .epilogue   ; Jump to the return sequence
-

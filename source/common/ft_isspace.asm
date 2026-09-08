@@ -1,3 +1,4 @@
+;------------------------------------------------------------------------------
 ;   Executable      : ft_isspace
 ;   Version         : 1.0
 ;   Created date    : 2026-09-07
@@ -8,7 +9,8 @@
 ;
 ;   Prototype       : int isspace(int c);
 ;
-;   Registers       : RDI -> int c
+;   Registers       : EDI -> int c
+;------------------------------------------------------------------------------
 
 
 SECTION .text       ; Section containing code

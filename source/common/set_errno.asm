@@ -1,3 +1,4 @@
+;------------------------------------------------------------------------------
 ;   Executable      : set_errno
 ;   Version         : 1.0
 ;   Created date    : 2026-09-07
@@ -6,6 +7,7 @@
 ;   Description     : Provide a generic procedure to set errno value
 ;
 ;   Registers       : RDI -> raw errno value as returned by syscalls
+;------------------------------------------------------------------------------
 
 
 SECTION .text               ; Section containing code

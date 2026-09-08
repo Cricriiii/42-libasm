@@ -1,3 +1,4 @@
+;------------------------------------------------------------------------------
 ;   Executable      : ft_strcpy
 ;   Version         : 1.0
 ;   Created date    : 2026-09-05
@@ -11,6 +12,7 @@
 ;
 ;   Registers       : RDI -> char *restrict dst
 ;                     RSI -> const char *restrict src
+;------------------------------------------------------------------------------
 
 
 SECTION .text

@@ -1,3 +1,4 @@
+;------------------------------------------------------------------------------
 ;   Executable      : ft_strlen
 ;   Version         : 1.0
 ;   Created date    : 2026-08-30
@@ -9,6 +10,7 @@
 ;   Prototype       : size_t strlen(const char *s);
 ;
 ;   Registers       : RDI -> char *restrict dst
+;------------------------------------------------------------------------------
 
 
 SECTION .text

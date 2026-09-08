@@ -1,3 +1,4 @@
+;------------------------------------------------------------------------------
 ;   Executable      : ft_write
 ;   Version         : 1.0
 ;   Created date    : 2026-09-05
@@ -12,12 +13,9 @@
 ;   Registers       : RDI -> int fd
 ;                     RSI -> const void buf[.count]
 ;                     RDX -> size_t count
+;------------------------------------------------------------------------------
 
 SECTION .text
-
-extern __errno_location ; Included by <errno.h>
-                        ; int * __errno_location(void);
-                        ; Returns a pointer to errno
 
 extern set_errno        ; Included in ./source/common
 
