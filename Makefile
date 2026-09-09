@@ -23,6 +23,7 @@ TESTER		:= $(TESTER_DIR)/$(NAME)_tester
 
 FILES	:= $(shell find $(SRC_DIR) -type f -wholename '*.asm')
 FILES	+= $(shell find $(COM_DIR) -type f -wholename '*.asm')
+# Filter out _bonus files
 OBJS	:= $(patsubst $(SRC_DIR)/%.asm, $(OBJ_DIR)/%.o, $(FILES))
 
 
@@ -32,6 +33,8 @@ OBJS	:= $(patsubst $(SRC_DIR)/%.asm, $(OBJ_DIR)/%.o, $(FILES))
 
 ## Build libasm.a
 all: $(NAME)
+
+bonus:
 
 $(NAME): $(OBJS)
 	ar rcs $(LIBASM_A) $(OBJS)
@@ -54,6 +57,7 @@ re:
 
 ## Build the tester
 test:
+	+$(MAKE) fclean
 	+$(MAKE) all
 	+$(MAKE) -C $(TESTER_DIR) all
 
@@ -94,4 +98,4 @@ help:
 	@echo
 
 
-.PHONY: all re test clean fclean help
+.PHONY: all re test clean fclean help bonus

@@ -1,5 +1,5 @@
 #ifndef TESTER_H
-# define TESTER_H
+#define TESTER_H
 
 #include <stddef.h>
 #include <stdio.h>
@@ -12,6 +12,12 @@
 #include <errno.h>
 #include <fcntl.h>
 
+typedef struct s_list {
+  void          *data;
+  struct s_list *next;
+} t_list;
+
+/* Mandatory */
 extern size_t ft_strlen(const char *s);
 extern char *ft_strcpy(char *restrict dst, const char *restrict src);
 extern int ft_strcmp(const char *s1, const char *s2);
@@ -19,8 +25,8 @@ extern ssize_t ft_write(int fd, const void *buf, size_t count);
 extern ssize_t ft_read(int fd, void *buf, size_t count);
 extern char *ft_strdup(const char *s);
 
-extern int ft_atoi_base_bonus(char *str, char *base);
-
-int test_ft_strlen(void);
+/* Bonus */
+extern int ft_atoi_base(char *str, char *base);
+extern void ft_list_push_front(t_list **begin_list, void *data);
 
 #endif

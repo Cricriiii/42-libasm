@@ -1,8 +1,8 @@
 ;------------------------------------------------------------------------------
-;   Executable      : ft_atoi_base_bonus
+;   Executable      : ft_atoi_base
 ;   Version         : 1.0
 ;   Created date    : 2026-09-05
-;   Last update     : 2026-09-07
+;   Last update     : 2026-09-09
 ;   Author          : Christophe Gajean
 ;   Description     : Assembly implementation of a base-dependant
 ;                   : alpha to integer conversion procedure.
@@ -12,7 +12,7 @@
 ;                   : The base length is dictated by the length of the
 ;                   : char array 'base' stored in RSI.
 ;
-;   Prototype       : int ft_atoi_base_bonus(char *str, char *base);
+;   Prototype       : int ft_atoi_base(char *str, char *base);
 ;
 ;   Registers       : RDI -> char *str
 ;                     RSI -> char *base
@@ -23,7 +23,7 @@ SECTION .data       ; Section containing uninitialized data
 
 SECTION .text       ; Section containing code
 
-global ft_atoi_base_bonus ; Make ft_atoi_base_bonus callable from outside
+global ft_atoi_base ; Make ft_atoi_base callable from outside
 
 %define SRC_PTR         rbp-0x08
 %define BASE_PTR        rbp-0x10
@@ -37,7 +37,7 @@ global ft_atoi_base_bonus ; Make ft_atoi_base_bonus callable from outside
     jz .set_return_value
 %endmacro
 
-ft_atoi_base_bonus:
+ft_atoi_base:
 ; Create the stack frame
     push rbp        ; Alignment prologue
     mov rbp, rsp    ; Anchor the base pointer at the stack position
@@ -59,7 +59,7 @@ ft_atoi_base_bonus:
     mov dword [EXPR_SIGN], 1   ; Initialize sign to 1
 
 
-; Store ft_atoi_base_bonus result onto the stack
+; Store ft_atoi_base result onto the stack
     xor rax, rax                ; Store 0 in AL for STOSD
     lea rdi, [RESULT]           ; Calculate the address of the result
     cld                         ; Set direction flag to up memory
