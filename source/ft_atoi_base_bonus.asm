@@ -31,10 +31,11 @@ global ft_atoi_base_bonus ; Make ft_atoi_base_bonus callable from outside
 %define BASE_PTR        rbp-0x20
 %define BASE_LENGTH     rbp-0x28
 %define RESULT          rbp-0x2c
-%define EXPR_SIGN       rbp-0x2d
+%define EXPR_SIGN       rbp-0x30
 
 %macro NUL_BYTE_JMP_RET 1
-    cmp byte [%1], 0
+    mov r10, [%1]
+    cmp byte [r10], 0
     jz .set_return_value
 %endmacro
 
@@ -60,6 +61,9 @@ ft_atoi_base_bonus:
 
     mov [BASE_LENGTH], rax     ; Store base length value
 
+    mov dword [EXPR_SIGN], 1   ; Initialize sign to 1
+
+
 ; Store ft_atoi_base_bonus result onto the stack
     xor rax, rax                ; Store 0 in AL for STOSD
     lea rdi, [RESULT]           ; Calculate the address of the result
@@ -69,7 +73,8 @@ ft_atoi_base_bonus:
 .skip_whitespaces:
     NUL_BYTE_JMP_RET SRC_PTR
 
-    mov edi, dword [SRC_PTR]    ; Prepare call to ft_isspace
+    mov r10, [SRC_PTR]          ; Load the current source address
+    movzx edi, byte [r10]       ; Prepare call to ft_isspace
     call ft_isspace
 
     cmp eax, 1                  ; Check if current character is a whitespace
@@ -81,11 +86,10 @@ ft_atoi_base_bonus:
 ; Assess the expression sign with regards to the '+' and '-' signs
 ; Stop at the first character different than '+' or '-'
 
-    mov [EXPR_SIGN], 1          ; Initialize sign to 1
-
 .convert_sign:
 ; test_is_plus
-    cmp byte [SRC_PTR], 0x2b    ; Test if character is '+'
+    mov r10, [SRC_PTR]          ; Load the current source address
+    cmp byte [r10], 0x2b        ; Test if character is '+'
     jnz .test_is_minus          ; If not, continue testing
 
     inc [SRC_PTR]               ; Else move pointer to the next character
@@ -94,10 +98,11 @@ ft_atoi_base_bonus:
     jmp .convert_sign           ; Loop
 
 .test_is_minus:
-    cmp byte [SRC_PTR], 0x2d    ; Test if character is '-'
+    mov r10, [SRC_PTR]          ; Load the current source address
+    cmp byte [r10], 0x2d        ; Test if character is '-'
     jnz .conversion             ; If not, start conversion
 
-    neg [EXPR_SIGN]             ; Change sign
+    neg dword [EXPR_SIGN]       ; Change sign
 
     inc [SRC_PTR]               ; Else move pointer to the next character
     NUL_BYTE_JMP_RET SRC_PTR
@@ -111,7 +116,8 @@ ft_atoi_base_bonus:
     xor rcx, rcx                ; Reset the index value
 
 .conversion:
-    movzx r8, byte [SRC_PTR]    ; Store source character in R8
+    mov r10, [SRC_PTR]          ; Load the current source address
+    movzx r8, byte [r10]        ; Store source character in R8
     
     mov r10, [BASE_PTR]         ; Store base string address in temporary R10
     movzx r9, byte [r10 + rcx]  ; Store current source character in R9
@@ -128,10 +134,10 @@ ft_atoi_base_bonus:
     jmp .conversion             ; Else, try next base character
 
 .calculate:
-    mov r10, [RESULT]           ; Store current result in temporary R10
-    mul r10, [BASE_LENGTH]      ; Multiply result by the base length
-    add r10, rcx                ; Add the remainder
-    mov [RESULT], r10           ; Store the result value on the stack
+    mov eax, [RESULT]           ; Store current result in EAX
+    imul eax, [BASE_LENGTH]     ; Multiply result by the base length
+    add eax, ecx                ; Add the remainder
+    mov [RESULT], eax            ; Store the result value on the stack
 
     xor rcx, rcx                ; Reset the index value
     inc [SRC_PTR]               ; Else move pointer to the next character
@@ -140,6 +146,7 @@ ft_atoi_base_bonus:
 
 .set_return_value:
     mov eax, [RESULT]           ; Set return value
+    imul eax, dword [EXPR_SIGN] ; Apply the expression sign
 
 .epilogue:
     leave                       ; Destroy the stack frame
