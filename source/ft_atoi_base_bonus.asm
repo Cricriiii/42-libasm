@@ -25,13 +25,11 @@ SECTION .text       ; Section containing code
 
 global ft_atoi_base_bonus ; Make ft_atoi_base_bonus callable from outside
 
-%define SRC_ORIG_PTR    rbp-0x08
-%define SRC_PTR         rbp-0x10
-%define BASE_ORIG_PTR   rbp-0x18
-%define BASE_PTR        rbp-0x20
-%define BASE_LENGTH     rbp-0x28
-%define RESULT          rbp-0x2c
-%define EXPR_SIGN       rbp-0x30
+%define SRC_PTR         rbp-0x08
+%define BASE_PTR        rbp-0x10
+%define BASE_LENGTH     rbp-0x18
+%define RESULT          rbp-0x20
+%define EXPR_SIGN       rbp-0x28
 
 %macro NUL_BYTE_JMP_RET 1
     mov r10, [%1]
@@ -46,10 +44,7 @@ ft_atoi_base_bonus:
     sub rsp, 0x40   ; Creates a 64 bytes wide stack frame
 
 ; Save parameters onto the stack
-    mov [SRC_ORIG_PTR], rdi    ; Save address of the source string pointer
     mov [SRC_PTR], rdi         ; Create moving pointer to source string
-
-    mov [BASE_ORIG_PTR], rsi   ; Save address of the source string pointer
     mov [BASE_PTR], rsi        ; Create moving pointer to base string
 
 ; Check if base is valid
