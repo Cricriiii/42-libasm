@@ -4,8 +4,7 @@
 ;   Created date    : 2026-09-09
 ;   Last update     : 2026-09-09
 ;   Author          : Christophe Gajean
-;   Description     : Adds a new element of type t_list to the beginning of
-;                   : the list.
+;   Description     : Calculate the length of the list.
 ;
 ;   Prototype       : unsigned int ft_list_size(t_list *begin_list);
 ;

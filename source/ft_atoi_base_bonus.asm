@@ -75,7 +75,7 @@ ft_atoi_base:
     cmp eax, 1                  ; Check if current character is a whitespace
     jnz .convert_sign           ; If not, start converting
     
-    inc [SRC_PTR]               ; Else load next character
+    inc qword [SRC_PTR]         ; Else load next character
     jmp .skip_whitespaces       ; Loop
 
 ; Assess the expression sign with regards to the '+' and '-' signs
@@ -87,7 +87,7 @@ ft_atoi_base:
     cmp byte [r10], 0x2b        ; Test if character is '+'
     jnz .test_is_minus          ; If not, continue testing
 
-    inc [SRC_PTR]               ; Else move pointer to the next character
+    inc qword [SRC_PTR]         ; Else move pointer to the next character
     NUL_BYTE_JMP_RET SRC_PTR
 
     jmp .convert_sign           ; Loop
@@ -99,7 +99,7 @@ ft_atoi_base:
 
     neg dword [EXPR_SIGN]       ; Change sign
 
-    inc [SRC_PTR]               ; Else move pointer to the next character
+    inc qword [SRC_PTR]         ; Else move pointer to the next character
     NUL_BYTE_JMP_RET SRC_PTR
 
     jmp .convert_sign           ; Loop
@@ -135,7 +135,7 @@ ft_atoi_base:
     mov [RESULT], eax            ; Store the result value on the stack
 
     xor rcx, rcx                ; Reset the index value
-    inc [SRC_PTR]               ; Else move pointer to the next character
+    inc qword [SRC_PTR]         ; Else move pointer to the next character
     NUL_BYTE_JMP_RET SRC_PTR
     jmp .conversion             ; Loop with the next source character
 
