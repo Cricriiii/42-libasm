@@ -2,7 +2,7 @@
 ;   Executable      : ft_list_sort
 ;   Version         : 1.0
 ;   Created date    : 2026-09-09
-;   Last update     : 2026-09-09
+;   Last update     : 2026-09-10
 ;   Author          : Christophe Gajean
 ;   Description     : Sort the list in ascending orders. Uses a bubble sort
 ;                     implementation. Elements are swapped. This version
@@ -18,13 +18,12 @@
 SECTION .text           ; Section containing code
 
 extern ft_list_size     ; Included in /source/
-extern printf
 
 global ft_list_sort
 
 ; Function parameters
 %define BEGIN_LIST  rbp-0x08
-%define CMP_FN      rbp-0x10
+%define CMP_FCT     rbp-0x10
 ; Indexes
 %define MAX_IDX     rbp-0x14
 %define CUR_IDX     rbp-0x18
@@ -38,11 +37,11 @@ ft_list_sort:
 ; Create the stack frame
   push rbp        ; Alignment prologue
   mov rbp, rsp    ; Anchor the base pointer at the stack position
-  sub rsp, 0x40   ; Creates a 48 bytes wide stack frame
+  sub rsp, 0x40   ; Creates a 64 bytes wide stack frame
 
 ; Save parameters onto the stack
   mov [BEGIN_LIST], rdi     ; Push begin_list
-  mov [CMP_FN], rsi         ; Push data
+  mov [CMP_FCT], rsi        ; Push data
 
 ; Get the list size to initialize the wall / max index value
   mov rdi, [rdi]            ; Store list start
@@ -94,7 +93,7 @@ ft_list_sort:
   mov rdi, [rdi]            ; Dereference to get first 8 bytes (data field)
   mov rsi, [NEXT_ELEM]      ; Pointer to structure
   mov rsi, [rsi]            ; Dereference to get first 8 bytes (data field)
-  call [CMP_FN]             ; Call the comparison function
+  call [CMP_FCT]            ; Call the comparison function
 
   cmp eax, 0                ; Compare cur_elem and next_elem
   jg .swap                  ; cur_elem is greater than next_elem
