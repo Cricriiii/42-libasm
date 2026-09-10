@@ -90,7 +90,7 @@ ft_list_sort:
   cmp eax, 0                ; Compare cur_elem and next_elem
   jg .swap                  ; cur_elem is greater than next_elem
 
-.advance_pointers:
+.advance_pointers_no_swap:
 ; Advance prev_elem pointer
   mov r8, [CUR_ELEM]        ; Prepare prev_elem = cur_elem
   mov [PREV_ELEM], r8       ; prev_elem = cur_elem
@@ -107,6 +107,23 @@ ft_list_sort:
   inc dword [CUR_IDX]       ; Increment current comparison index
 
   jmp .assess_completion    ; Loop
+
+.advance_pointers_swap:
+; Advance prev_elem pointer
+  mov r8, [NEXT_ELEM]       ; Prepare prev_elem = old next_elem
+  mov [PREV_ELEM], r8       ; prev_elem = old next_elem
+
+; cur_elem remains the old cur_elem
+  mov r8, [CUR_ELEM]        ; Retrieve cur_elem
+
+; Advance next_elem pointer from the current element
+  add r8, 0x08              ; Reach the cur_elem 'next' field address
+  mov r8, [r8]              ; Store its value in r8
+  mov [NEXT_ELEM], r8       ; next_elem = next_elem->next
+
+  inc dword [CUR_IDX]       ; Increment current comparison index
+
+  jmp .assess_completion    ; Loop  
 
 .swap:
 ; cur_elem->next = next_elem->next
@@ -140,7 +157,7 @@ ft_list_sort:
   mov r9, [NEXT_ELEM]       ; Retrieve 'next_elem' t_list* address
   mov [r8], r9              ; prev_elem->next = next
   
-  jmp .reset_pointers     ; Move on to the next elements
+  jmp .advance_pointers_swap     ; Move on to the next elements
 
 ; Swap head of list
 .swap_head:
@@ -149,7 +166,7 @@ ft_list_sort:
   mov r9, [NEXT_ELEM]       ; Retrieve 'next_elem' t_list* address
   mov [r8], r9      ; *begin_list = next_elem
 
-  jmp .reset_pointers     ; Move on to the next elements
+  jmp .advance_pointers_swap     ; Move on to the next elements
 
 .epilogue
   leave                     ; Destroy the stack frame
