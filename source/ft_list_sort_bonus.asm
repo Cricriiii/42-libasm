@@ -18,6 +18,7 @@
 SECTION .text           ; Section containing code
 
 extern ft_list_size     ; Included in /source/
+extern printf
 
 global ft_list_sort
 
@@ -31,6 +32,7 @@ global ft_list_sort
 %define PREV_ELEM   rbp-0x20
 %define CUR_ELEM    rbp-0x28
 %define NEXT_ELEM   rbp-0x30
+%define F_SORTED    rbp-0x31
 
 ft_list_sort:
 ; Create the stack frame
@@ -65,6 +67,8 @@ ft_list_sort:
 
   mov dword [CUR_IDX], 1    ; Initialize the current index
 
+  mov byte [F_SORTED], 1    ; Reset the sorted flag
+
 .assess_completion:
 ; Test comparison index against number of expected comparisons
   mov r8d, [CUR_IDX]        ; Save current index
@@ -77,6 +81,11 @@ ft_list_sort:
   
   cmp dword [MAX_IDX], 0    ; Test if all comparisons are done
   jz .epilogue              ; If so, return
+
+; If no swap occurred, F_SORTED flag value is still one
+  cmp byte [F_SORTED], 1    ; Test if list sorted
+  je .epilogue              ; If so, return  
+
   jmp .reset_pointers       ; Else start over
 
 .compare:  
@@ -126,6 +135,8 @@ ft_list_sort:
   jmp .assess_completion    ; Loop  
 
 .swap:
+  mov byte [F_SORTED], 0    ; Swap needed, list is not sorted
+
 ; cur_elem->next = next_elem->next
   mov r8, [CUR_ELEM]        ; Retrieve 'cur_elem' t_list* address
   add r8, 0x08              ; Retrieve 'cur_elem->next' field address (not its value)
