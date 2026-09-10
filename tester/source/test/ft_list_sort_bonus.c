@@ -1,11 +1,10 @@
 #include "tester.h"
 
-int test_ft_list_sort(void) {
-    char *strs[] = {"3", "2", "1"};
-    t_list *elems = nullptr;    
+int test_ft_list_sort(int n, char **strs) {
+    t_list *elems = nullptr;
 
-    for (int i = sizeof(strs)/sizeof(*strs) - 1; i >= 0; --i) {
-        ft_list_push_front(&elems, strs[i]);
+    for (;n; --n) {
+        ft_list_push_front(&elems, strs[n - 1]);
     }
 
     for (t_list *ptr = elems; ptr; ptr = ptr->next) {
@@ -32,6 +31,7 @@ int test_ft_list_sort(void) {
     return (0);
 }
 
-int main(void) {
-    return (test_ft_list_sort());
+int main(int argc, char **argv) {
+    if (argc == 1) return (1);
+    return (test_ft_list_sort(argc - 1, ++argv));
 }

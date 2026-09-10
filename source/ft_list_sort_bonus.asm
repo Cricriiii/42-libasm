@@ -52,7 +52,7 @@ ft_list_sort:
   dec dword [MAX_IDX]       ; Adjust the number of comparison to be made
                             ; Ex: 4 elements means 3 comparisons maximum
 
-; Initialize prev_elem, cur_elem and next_elem
+; Initialize prev_elem, cur_elem, next_elem and cur_index
 .reset_pointers:
   mov qword [PREV_ELEM], 0  ; Previous pointer is null
 
@@ -77,7 +77,7 @@ ft_list_sort:
   
   cmp dword [MAX_IDX], 0    ; Test if all comparisons are done
   jz .epilogue              ; If so, return
-  jmp .reset_pointers         ; Else start over
+  jmp .reset_pointers       ; Else start over
 
 .compare:  
 ; Compare cur_elem, next_elem
@@ -91,8 +91,6 @@ ft_list_sort:
   jg .swap                  ; cur_elem is greater than next_elem
 
 .advance_pointers:
-  inc dword [CUR_IDX]       ; Increment current comparison index
-
 ; Advance prev_elem pointer
   mov r8, [CUR_ELEM]        ; Prepare prev_elem = cur_elem
   mov [PREV_ELEM], r8       ; prev_elem = cur_elem
@@ -105,6 +103,8 @@ ft_list_sort:
   add r8, 0x08              ; Reach the next_elem 'next' field addres
   mov r8, [r8]              ; Store its value in r8
   mov [NEXT_ELEM], r8       ; next_elem = next_elem->next
+
+  inc dword [CUR_IDX]       ; Increment current comparison index
 
   jmp .assess_completion    ; Loop
 
@@ -140,7 +140,7 @@ ft_list_sort:
   mov r9, [NEXT_ELEM]       ; Retrieve 'next_elem' t_list* address
   mov [r8], r9              ; prev_elem->next = next
   
-  jmp .advance_pointers     ; Move on to the next elements
+  jmp .reset_pointers     ; Move on to the next elements
 
 ; Swap head of list
 .swap_head:
@@ -149,8 +149,8 @@ ft_list_sort:
   mov r9, [NEXT_ELEM]       ; Retrieve 'next_elem' t_list* address
   mov [r8], r9      ; *begin_list = next_elem
 
-  jmp .advance_pointers     ; Move on to the next elements
+  jmp .reset_pointers     ; Move on to the next elements
 
 .epilogue
-  leave           ; Destroy the stack frame
+  leave                     ; Destroy the stack frame
   ret
