@@ -1,0 +1,1 @@
+alias rmk='cd ../.. && make test && cd ./tester/executable && clear'
