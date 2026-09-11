@@ -19,11 +19,7 @@ SECTION .text
 global ft_strcpy        ; Make the function callable / visible from outside
 
 ft_strcpy:
-; Create the stack frame
-    push rbp            ; Alignment prologue
-    mov rbp, rsp        ; Anchor the base pointer at the stack position
-
-    mov rax, rdi        ; Set aside 'dst' parameter as the return value
+    mov rdx, rdi        ; Set aside 'dst' parameter as the return value
 
 ;   mov rcx, -1         ; strcpy only stops at a null byte or segfault
                         ; STOSB won't require a counter
@@ -33,7 +29,7 @@ ft_strcpy:
     stosb               ; Copy it in 'dst'
 
     cmp byte [rsi], 0   ; Assess if current 'src' chararacter is null byte
-    je .done            ; If so, copy is finished
+    je .end             ; If so, copy is finished
 
 ;   dec rcx             ; Without REP, STOSB doesn't decrement RCX
                         ; But we don't need it anyway
@@ -43,6 +39,6 @@ ft_strcpy:
 
     jmp .copy           ; Loop
 
-.done:
-    leave               ; Epilogue: destroy the stack frame
-    ret                 ; RAX contains the 'dst' string address
+.end:
+    mov rax, rdx        ; Set the return value to 'dst'
+    ret

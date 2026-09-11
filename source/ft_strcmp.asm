@@ -2,7 +2,7 @@
 ;   Executable      : ft_strcmp
 ;   Version         : 1.0
 ;   Created date    : 2026-09-05
-;   Last update     : 2026-09-07
+;   Last update     : 2026-09-11
 ;   Author          : Christophe Gajean
 ;   Description     : Assembly implementation of man 3 strcmp
 ;                     based on the libc prototype.
@@ -18,23 +18,19 @@ SECTION .text           ; Section containing code
 global ft_strcmp        ; Make the function callable / visible from outside
 
 ft_strcmp:
-    push rbp            ; Alignment prologue
-    mov rbp, rsp        ; Anchor the base pointer at the stack position
-
-.compare:
     mov al, byte [rdi]  ; Store *s1 in AL
     cmp al, 0           ; Test if the end of s1 has been reached
-    jz .done            ; If so, exit loop
+    jz .end            ; If so, exit loop
 
     cmp al, byte [rsi]  ; Compare *s1 and *s2
-    jnz .done           ; If different (ZF=0), exit loop
+    jnz .end           ; If different (ZF=0), exit loop
 
                         ; Else
     inc rdi             ; ++s1
     inc rsi             ; ++s2
-    jmp .compare        ; Loop
+    jmp ft_strcmp       ; Loop
 
-.done:
+.end:
 ; man 3 strcmp specifies that:
 ;                         "the comparison is done using unsigned characters".
 
@@ -55,5 +51,4 @@ ft_strcmp:
     sub eax, ecx            ; Store return value (*s1-*s2) in EAX
                             ; in accordance with System V ABI requirements
 
-    leave                   ; Epilogue: destroy the stack frame
     ret

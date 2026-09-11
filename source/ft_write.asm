@@ -22,9 +22,6 @@ extern set_errno    ; Included in ./source/common
 global ft_write     ; Make the function callable / visible from outside
 
 ft_write:
-    push rbp        ; Alignment prologue
-    mov rbp, rsp    ; Anchor the base pointer at the stack position
-
     mov rax, 1      ; Specify sys_write syscall
                     ; The RDI, RSI and RDX registers are already set
     syscall         ; Make the kernel call
@@ -33,8 +30,7 @@ ft_write:
     jl .error       ; Expected return: 0 or positive -> OK, else Error
 
 ; Success and fail paths: here, RAX contains the return value
-.epilogue:
-    leave           ; Epilogue: destroy the stack frame
+.end:
     ret
 
 .error:
@@ -42,4 +38,4 @@ ft_write:
     call set_errno  ; Set errno
 
     mov rax, -1     ; Set ft_write return value to -1 (error)
-    jmp .epilogue   ; Jump to the return sequence
+    jmp .end

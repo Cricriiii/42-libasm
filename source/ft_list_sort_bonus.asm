@@ -15,9 +15,9 @@
 ;                     RSI -> int (*cmp)())
 ;------------------------------------------------------------------------------
 
-SECTION .text           ; Section containing code
+SECTION .text                   ; Section containing code
 
-extern ft_list_size     ; Included in /source/
+extern ft_list_size             ; Included in ./source/
 
 global ft_list_sort
 
@@ -35,149 +35,149 @@ global ft_list_sort
 
 ft_list_sort:
 ; Create the stack frame
-  push rbp        ; Alignment prologue
-  mov rbp, rsp    ; Anchor the base pointer at the stack position
-  sub rsp, 0x40   ; Creates a 64 bytes wide stack frame
+    push rbp                    ; Alignment prologue
+    mov rbp, rsp                ; Anchor the base pointer at the stack position
+    sub rsp, 0x40               ; Creates a 64 bytes wide stack frame
 
 ; Save parameters onto the stack
-  mov [BEGIN_LIST], rdi     ; Push begin_list
-  mov [CMP_FCT], rsi        ; Push data
+    mov [BEGIN_LIST], rdi       ; Push begin_list
+    mov [CMP_FCT], rsi          ; Push data
 
 ; Get the list size to initialize the wall / max index value
-  mov rdi, [rdi]            ; Store list start
-  call ft_list_size         ; Get list size
+    mov rdi, [rdi]              ; Store list start
+    call ft_list_size           ; Get list size
 
-  cmp eax, 1                ; If size < 2
-  jbe .epilogue             ; If so, return
-  mov [MAX_IDX], eax        ; Else save the size on the stack
-  dec dword [MAX_IDX]       ; Adjust the number of comparison to be made
-                            ; Ex: 4 nodeents means 3 comparisons maximum
+    cmp eax, 1                  ; If size < 2
+    jbe .epilogue               ; If so, return
+    mov [MAX_IDX], eax          ; Else save the size on the stack
+    dec dword [MAX_IDX]         ; Adjust the number of comparison to be made
+                                ; Ex: 4 nodes mean 3 comparisons maximum
 
 ; Initialize prev_node, cur_node, next_node and cur_index
 .reset_pointers:
-  mov qword [PREV_NODE], 0  ; Previous pointer is null
+    mov qword [PREV_NODE], 0    ; prev_node = nullptr
 
-  mov r8, [BEGIN_LIST]      ; The first nodeent of the list
-  mov r8, [r8]              ; Dereference the t_list** pointer
-  mov [CUR_NODE], r8        ; goes in CUR_NODE
+    mov r8, [BEGIN_LIST]        ; cur_elem points o the first node of the list
+    mov r8, [r8]                ; Dereference the t_list** pointer
+    mov [CUR_NODE], r8          ; Do cur_node = *begin_list
 
-  mov r8, [r8+0x08]         ; The second nodeent of the list
-  mov [NEXT_NODE], r8       ; goes into NEXT_NODE
+    mov r8, [r8+0x08]           ; next_elem points to second node of the list
+    mov [NEXT_NODE], r8         ; Do next_node = cur_node->next
 
-  mov dword [CUR_IDX], 1    ; Initialize the current index
+    mov dword [CUR_IDX], 1      ; Initialize the current index
 
-  mov byte [F_SORTED], 1    ; Reset the sorted flag
+    mov byte [F_SORTED], 1      ; Set the sorted flag to true
+                                ; Swap operations will set it to false
 
 .assess_completion:
-; Test comparison index against number of expected comparisons
-  mov r8d, [CUR_IDX]        ; Save current index
-  cmp r8d, dword [MAX_IDX]  ; Compare current and max indexes
+; Test comparison index against the number of expected comparisons
+    mov r8d, [CUR_IDX]          ; Save the current index
 
-  jle .compare              ; Last comparison not done
+    cmp r8d, dword [MAX_IDX]    ; Compare current and max indexes
+    jle .compare                ; If last comparison is not done
+    dec dword [MAX_IDX]         ; Else, move the wall backwards
 
-  dec dword [MAX_IDX]       ; Last comparison done
-                            ; Move the wall backwards
-  
-  cmp dword [MAX_IDX], 0    ; Test if all comparisons are done
-  jz .epilogue              ; If so, return
+    cmp dword [MAX_IDX], 0      ; Test if all comparisons have been done
+    jz .epilogue                ; If so, return
 
-; If no swap occurred, F_SORTED flag value is still one
-  cmp byte [F_SORTED], 1    ; Test if list sorted
-  je .epilogue              ; If so, return  
+; If no swap occurred, F_SORTED flag is still true
+    cmp byte [F_SORTED], 1      ; Test if list sorted
+    je .epilogue                ; If so, return
 
-  jmp .reset_pointers       ; Else start over
+    jmp .reset_pointers         ; Else start over
 
-.compare:  
+.compare:
 ; Compare cur_node, next_node
-  mov rdi, [CUR_NODE]       ; Pointer to structure
-  mov rdi, [rdi]            ; Dereference to get first 8 bytes (data field)
-  mov rsi, [NEXT_NODE]      ; Pointer to structure
-  mov rsi, [rsi]            ; Dereference to get first 8 bytes (data field)
-  call [CMP_FCT]            ; Call the comparison function
+    mov rdi, [CUR_NODE]         ; Pointer to structure
+    mov rdi, [rdi]              ; Dereference to get first 8 bytes (data field)
+    mov rsi, [NEXT_NODE]        ; Pointer to structure
+    mov rsi, [rsi]              ; Dereference to get first 8 bytes (data field)
+    call [CMP_FCT]              ; Call the comparison function
 
-  cmp eax, 0                ; Compare cur_node and next_node
-  jg .swap                  ; cur_node is greater than next_node
+    cmp eax, 0                  ; Compare cur_node->data and next_node->data
+    jg .swap                    ; If cur_node->data greater than next_node->data, swap
+                                ; Else, just advance pointers
 
-.advance_pointers_no_swap:
-; Advance prev_node pointer
-  mov r8, [CUR_NODE]        ; Prepare prev_node = cur_node
-  mov [PREV_NODE], r8       ; prev_node = cur_node
+; Advance pointers without swap
+;   Advance prev_node pointer
+    mov r8, [CUR_NODE]          ; Prepare prev_node = cur_node
+    mov [PREV_NODE], r8         ; prev_node = cur_node
 
-; Advance cur_node pointer
-  mov r8, [NEXT_NODE]       ; Prepare cur_node = next_node
-  mov [CUR_NODE], r8        ; cur_node = next_node
+;   Advance cur_node pointer
+    mov r8, [NEXT_NODE]         ; Prepare cur_node = next_node
+    mov [CUR_NODE], r8          ; cur_node = next_node
 
-; Advance next_node pointer
-  add r8, 0x08              ; Reach the next_node 'next' field addres
-  mov r8, [r8]              ; Store its value in r8
-  mov [NEXT_NODE], r8       ; next_node = next_node->next
+;   Advance next_node pointer
+    add r8, 0x08                ; Reach the next_node 'next' field addres
+    mov r8, [r8]                ; Store its value in r8
+    mov [NEXT_NODE], r8         ; next_node = next_node->next
 
-  inc dword [CUR_IDX]       ; Increment current comparison index
+    inc dword [CUR_IDX]         ; Increment current comparison index
 
-  jmp .assess_completion    ; Loop
+    jmp .assess_completion      ; Loop
 
 .advance_pointers_swap:
 ; Advance prev_node pointer
-  mov r8, [NEXT_NODE]       ; Prepare prev_node = old next_node
-  mov [PREV_NODE], r8       ; prev_node = old next_node
+    mov r8, [NEXT_NODE]         ; Prepare prev_node = old next_node
+    mov [PREV_NODE], r8         ; prev_node = old next_node
 
 ; cur_node remains the old cur_node
-  mov r8, [CUR_NODE]        ; Retrieve cur_node
+    mov r8, [CUR_NODE]          ; Retrieve cur_node
 
-; Advance next_node pointer from the current nodeent
-  add r8, 0x08              ; Reach the cur_node 'next' field address
-  mov r8, [r8]              ; Store its value in r8
-  mov [NEXT_NODE], r8       ; next_node = next_node->next
+; Advance next_node pointer from the current node
+    add r8, 0x08                ; Reach the cur_node 'next' field address
+    mov r8, [r8]                ; Store its value in r8
+    mov [NEXT_NODE], r8         ; next_node = next_node->next
 
-  inc dword [CUR_IDX]       ; Increment current comparison index
+    inc dword [CUR_IDX]         ; Increment current comparison index
 
-  jmp .assess_completion    ; Loop  
+    jmp .assess_completion      ; Loop
 
 .swap:
-  mov byte [F_SORTED], 0    ; Swap needed, list is not sorted
+    mov byte [F_SORTED], 0      ; Swap needed, set to sorted flag to false
 
 ; cur_node->next = next_node->next
-  mov r8, [CUR_NODE]        ; Retrieve 'cur_node' t_list* address
-  add r8, 0x08              ; Retrieve 'cur_node->next' field address (not its value)
+    mov r8, [CUR_NODE]          ; Retrieve 'cur_node' t_list* address
+    add r8, 0x08                ; Retrieve 'cur_node->next' field address (not its value)
 
-  mov r9, [NEXT_NODE]       ; Retrieve 'next_node' t_list* address
-  add r9, 0x08              ; Compute address of 'next_node->next' field (&next_node->next)
-  mov r9, [r9]              ; Dereference: r9 now holds the value of 'next_node->next'
+    mov r9, [NEXT_NODE]         ; Retrieve 'next_node' t_list* address  
+    add r9, 0x08                ; Compute address of 'next_node->next' field (&next_node->next)
+    mov r9, [r9]                ; Dereference: r9 now holds the value of 'next_node->next'
 
-  mov [r8], r9              ; cur_node->next = next_node->next
+    mov [r8], r9                ; cur_node->next = next_node->next
 
 ; next_node->next = cur_node
-  mov r8, [NEXT_NODE]       ; Retrieve 'next_node' t_list* address
-  add r8, 0x08              ; Compute address of 'next_node->next' field (&next_node->next)
-  
-  mov r9, [CUR_NODE]        ; Retrieve 'cur_node' t_list* address
+    mov r8, [NEXT_NODE]         ; Retrieve 'next_node' t_list* address
+    add r8, 0x08                ; Compute address of 'next_node->next' field (&next_node->next)
 
-  mov [r8], r9              ; next_node->next = cur_node
-                            ; next_node->next is inherited from previous step
+    mov r9, [CUR_NODE]          ; Retrieve 'cur_node' t_list* address
 
-; Then, two cases, either swapping head or any swapping middle nodeent
-  cmp dword [CUR_IDX], 1    ; Test if cur_index == 0
-  jz .swap_head             ; If so, swap head of list
+    mov [r8], r9                ; next_node->next = cur_node
+                                ; next_node->next is inherited from previous step
+
+; Then, two cases, either swapping head or any swapping middle node
+    cmp dword [CUR_IDX], 1      ; Test if cur_index == 0
+    jz .swap_head               ; If so, swap head of list
 
 .swap_others:
 ; prev_node->next = next_node
-  mov r8, [PREV_NODE]       ; Retrieve 'prev_node' t_list* address
-  add r8, 0x08              ; Compute address of 'prev_node->next' field (&prev_node->next)
-  
-  mov r9, [NEXT_NODE]       ; Retrieve 'next_node' t_list* address
-  mov [r8], r9              ; prev_node->next = next
-  
-  jmp .advance_pointers_swap     ; Move on to the next nodeents
+    mov r8, [PREV_NODE]         ; Retrieve 'prev_node' t_list* address
+    add r8, 0x08                ; Compute address of 'prev_node->next' field (&prev_node->next)
+
+    mov r9, [NEXT_NODE]         ; Retrieve 'next_node' t_list* address
+    mov [r8], r9                ; prev_node->next = next
+
+    jmp .advance_pointers_swap  ; Move on to the next nodes
 
 ; Swap head of list
 .swap_head:
 ; *begin_list = next_node
-  mov r8, [BEGIN_LIST]      ; Retrieve 't_list **begin_list' address
-  mov r9, [NEXT_NODE]       ; Retrieve 'next_node' t_list* address
-  mov [r8], r9      ; *begin_list = next_node
+    mov r8, [BEGIN_LIST]        ; Retrieve 't_list **begin_list' address
+    mov r9, [NEXT_NODE]         ; Retrieve 'next_node' t_list* address
+    mov [r8], r9                ; *begin_list = next_node
 
-  jmp .advance_pointers_swap     ; Move on to the next nodeents
+    jmp .advance_pointers_swap  ; Move on to the next nodes
 
 .epilogue:
-  leave                     ; Epilogue: destroy the stack frame
-  ret
+    leave                       ; Epilogue: destroy the stack frame
+    ret

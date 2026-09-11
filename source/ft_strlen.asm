@@ -17,9 +17,6 @@ SECTION .text       ; Section containing code
 global ft_strlen    ; Make the function callable / visible from outside
 
 ft_strlen:
-    push rbp        ; Alignment prologue
-    mov rbp, rsp    ; Anchor the base pointer at the stack position
-
     xor rax, rax    ; Set searched byte value (0) in AL as expected by SCASB
     mov rcx, -1     ; Set the maximum scan count to 64 bits
                     ; This value means infinity here, as 64-bits exceeds
@@ -40,5 +37,4 @@ ft_strlen:
     mov rax, rdi    ; Save string length in RAX (size_t is 64 bits)
                     ; in accordance with System V ABI requirements
 
-    leave           ; Epilogue: destroy the stack frame
     ret

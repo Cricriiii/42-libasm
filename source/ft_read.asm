@@ -22,9 +22,6 @@ extern set_errno    ; Included in ./source/common
 global ft_read      ; Make the function callable / visible from outside
 
 ft_read:
-    push rbp        ; Alignment prologue
-    mov rbp, rsp    ; Anchor the base pointer at the stack position
-
     mov rax, 0      ; Specify the sys_read syscall
                     ; The RDI, RSI and RDX registers are already set
     syscall         ; Make the kernel call
@@ -33,8 +30,7 @@ ft_read:
     jl .error       ; Expected return: 0 or positive -> OK, else Error
 
 ; Success and fail paths: here, RAX contains the return value
-.epilogue:
-    leave           ; Epilogue: destroy the stack frame
+.end:
     ret
 
 .error:
@@ -42,4 +38,4 @@ ft_read:
     call set_errno  ; Set errno value
 
     mov rax, -1     ; Set ft_write return value
-    jmp .epilogue   ; Jump to the return sequence
+    jmp .end        ; Jump to the return sequence
