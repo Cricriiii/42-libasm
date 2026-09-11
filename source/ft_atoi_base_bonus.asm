@@ -18,9 +18,6 @@
 ;                     RSI -> char *base
 ;------------------------------------------------------------------------------
 
-SECTION .data       ; Section containing uninitialized data
-    Result: dd 0    ; int Result = 0;
-
 SECTION .text       ; Section containing code
 
 global ft_atoi_base ; Make ft_atoi_base callable from outside
@@ -144,7 +141,7 @@ ft_atoi_base:
     imul eax, dword [EXPR_SIGN] ; Apply the expression sign
 
 .epilogue:
-    leave                       ; Destroy the stack frame
+    leave                       ; Epilogue: destroy the stack frame
     ret
 
 .error:
@@ -264,7 +261,7 @@ assess_base:
 ; The base is valid, return its size
 .valid:
     mov rax, [rbp-0x40c]         ; Retrieve the base length from the stack
-    leave                        ; Destroy the stack frame
+    leave                        ; Epilogue: destroy the stack frame
     ret
 
 .invalid:

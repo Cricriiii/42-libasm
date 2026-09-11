@@ -2,7 +2,7 @@
 ;   Executable      : ft_write
 ;   Version         : 1.0
 ;   Created date    : 2026-09-05
-;   Last update     : 2026-09-07
+;   Last update     : 2026-09-11
 ;   Author          : Christophe Gajean
 ;   Description     : Assembly implementation of man 2 write
 ;                     based on the libc prototype.
@@ -15,31 +15,31 @@
 ;                     RDX -> size_t count
 ;------------------------------------------------------------------------------
 
-SECTION .text
+SECTION .text       ; Section containing code
 
-extern set_errno        ; Included in ./source/common
+extern set_errno    ; Included in ./source/common
 
-global ft_write     ; Make ft_write callable / visible from outside
+global ft_write     ; Make the function callable / visible from outside
 
 ft_write:
-; Create the stack frame
     push rbp        ; Alignment prologue
     mov rbp, rsp    ; Anchor the base pointer at the stack position
 
     mov rax, 1      ; Specify sys_write syscall
+                    ; The RDI, RSI and RDX registers are already set
     syscall         ; Make the kernel call
 
-    cmp rax, 0      ; Check syscall return value
-    jl .error       ; If error (RAX<0), jump to the error sequence
+    cmp rax, 0      ; Check syscall return status
+    jl .error       ; Expected return: 0 or positive -> OK, else Error
 
-; Success and fail paths: RAX contains the number of written bytes
+; Success and fail paths: here, RAX contains the return value
 .epilogue:
-    leave           ; Destroy the stack frame
+    leave           ; Epilogue: destroy the stack frame
     ret
 
 .error:
-    mov rdi, rax    ; Prepare call of set_errno with raw errno value
-    call set_errno  ; Set errno value
+    mov rdi, rax    ; Put the errno value as returned by the syscall
+    call set_errno  ; Set errno
 
-    mov rax, -1     ; Set ft_write return value
+    mov rax, -1     ; Set ft_write return value to -1 (error)
     jmp .epilogue   ; Jump to the return sequence

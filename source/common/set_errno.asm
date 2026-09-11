@@ -9,24 +9,25 @@
 ;   Registers       : RDI -> raw errno value as returned by syscalls
 ;------------------------------------------------------------------------------
 
-
 SECTION .text               ; Section containing code
 
 extern __errno_location     ; Included by <errno.h>
                             ; int * __errno_location(void);
                             ; Returns a pointer to errno
 
-global set_errno            ; Make set_errno visible from outside
+global set_errno            ; Make the function callable / visible from outside
+
+%define ERRVAL rbp-0x04
 
 set_errno:
 ; Create the stack frame
-    push rbp        ; Alignment prologue
-    mov rbp, rsp    ; Anchor the base pointer at the stack position
-    sub rsp, 0x10   ; Move RSP 16 bytes away
+    push rbp                ; Alignment prologue
+    mov rbp, rsp            ; Anchor the base pointer at the stack position
+    sub rsp, 0x10           ; Creates a 16 bytes wide stack frame
 
 ; Set errno
-    neg rdi                   ; Get the absolute errno value
-    mov dword [rbp-0x4], edi  ; Set the errno value aside on the stack
+    neg rdi                 ; Compute the absolute errno value
+    mov [ERRVAL], edi       ; Set the errno value aside on the stack
 
     ; https://www.tortall.net/projects/yasm/manual/html/objfmt-elf32-wrt.html
     ; https://www.segmentationfault.fr/linux/role-plt-got-ld-so/
@@ -34,28 +35,29 @@ set_errno:
                                     ;
                                     ; Linux programs are linked as PIE
                                     ; (Position Independant Executable).
-                                    ; On the other hand, the linking process
-                                    ; requires the memory offset between
-                                    ; 'call' instruction to be resolved.
+                                    ; However, the linking process requires
+                                    ; that the memory offset between all the
+                                    ; 'call' instructions to be resolved
+                                    ; beforehands
                                     ;
                                     ; With a PIC (Program Independant Code)
                                     ; it is impossible to do so with external
                                     ; librairies such as glibc (also PIC), 
                                     ; since offsets vary from one execution
-                                    ; to another.
+                                    ; to another
                                     ;
-                                    ; It is necessary to build a dynamic
+                                    ; It is then necessary to build a dynamic
                                     ; interface, called PLT (Procedure Linkage
-                                    ; Table), whose role is to store
-                                    ; dynamically the external procedures
-                                    ; addresses, resolved at linking.
+                                    ; Table), whose role is to dynamically
+                                    ; interface the external procedures
+                                    ; addresses and the local call instructions
                                     ;
                                     ; The WRT operator and the special symbol
-                                    ; '..plt' does so.
+                                    ; '..plt' do so.
 
-    lea r9, [rbp-0x4]       ; Calculate and store the stack address of errno
-    mov r8d, [r9]           ; Fetch the errno value and store it in r8
-    mov dword [rax], r8d    ; Set the errno value
+    mov r8d, [ERRVAL]               ; Fetch the errno value and store it in r8
+    mov dword [rax], r8d            ; Set the errno value
 
-    leave   ; Destroy the stack frame
+; Leave function
+    leave           ; Epilogue: destroy the stack frame
     ret

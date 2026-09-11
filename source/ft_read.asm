@@ -2,7 +2,7 @@
 ;   Executable      : ft_read
 ;   Version         : 1.0
 ;   Created date    : 2026-09-07
-;   Last update     : 2026-09-07
+;   Last update     : 2026-09-11
 ;   Author          : Christophe Gajean
 ;   Description     : Assembly implementation of man 2 read
 ;                     based on the libc prototype.
@@ -15,26 +15,26 @@
 ;------------------------------------------------------------------------------
 
 
-SECTION .text
+SECTION .text       ; Section containing code
 
 extern set_errno    ; Included in ./source/common
 
-global ft_read      ; Make ft_read callable / visible from outside
+global ft_read      ; Make the function callable / visible from outside
 
 ft_read:
-; Create the stack frame
     push rbp        ; Alignment prologue
     mov rbp, rsp    ; Anchor the base pointer at the stack position
 
     mov rax, 0      ; Specify the sys_read syscall
+                    ; The RDI, RSI and RDX registers are already set
     syscall         ; Make the kernel call
 
     cmp rax, 0      ; Check syscall return value
-    jl .error       ; If error (RAX<0), jump to the error sequence
+    jl .error       ; Expected return: 0 or positive -> OK, else Error
 
-; Success and fail paths: RAX contains the number of written bytes
+; Success and fail paths: here, RAX contains the return value
 .epilogue:
-    leave           ; Destroy the stack frame
+    leave           ; Epilogue: destroy the stack frame
     ret
 
 .error:

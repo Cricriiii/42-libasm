@@ -2,7 +2,7 @@
 ;   Executable      : ft_strcpy
 ;   Version         : 1.0
 ;   Created date    : 2026-09-05
-;   Last update     : 2026-09-07
+;   Last update     : 2026-09-11
 ;   Author          : Christophe Gajean
 ;   Description     : Assembly implementation of man 3 strcpy
 ;                     based on the libc prototype.
@@ -14,30 +14,35 @@
 ;                     RSI -> const char *restrict src
 ;------------------------------------------------------------------------------
 
-
 SECTION .text
 
-global ft_strcpy    ; Make ft_strcopy callable / visible from outside
-
+global ft_strcpy        ; Make the function callable / visible from outside
 
 ft_strcpy:
-    xor rax, rax    ; Initializing the RAX register for imminent use
-;   mov rcx, -1     ; Not setting the counter as strcpy only stops
-                    ; at the first null bytes in src
-                    ; Also, no REP mode for STOSB, so RCX would be
-                    ; manually decremented.
-    mov rdx, rdi    ; Saving dst string address as return value
+; Create the stack frame
+    push rbp            ; Alignment prologue
+    mov rbp, rsp        ; Anchor the base pointer at the stack position
+
+    mov rax, rdi        ; Set aside 'dst' parameter as the return value
+
+;   mov rcx, -1         ; strcpy only stops at a null byte or segfault
+                        ; STOSB won't require a counter
 
 .copy:
-    mov al, byte [rsi]  ; Storing current src character into AL
-    stosb               ; Storing character into current dst byte
-    cmp byte [rsi], 0   ; Compare current src byte with null character
-    je .done            ; If current src byte is null character, done.
-;    dec rcx            ; See comment above about RDC
-    inc rsi             ; Selecting next source character
+    mov al, byte [rsi]  ; Store current 'src' character into AL
+    stosb               ; Copy it in 'dst'
+
+    cmp byte [rsi], 0   ; Assess if current 'src' chararacter is null byte
+    je .done            ; If so, copy is finished
+
+;   dec rcx             ; Without REP, STOSB doesn't decrement RCX
+                        ; But we don't need it anyway
+
+    inc rsi             ; Else, select next 'src' character to copy
+                        ; STOSB automatically increments RDI
+
     jmp .copy           ; Loop
 
 .done:
-    mov rax, rdx        ; Store destination pointer in RAX
-                        ; in accordance with System V ABI requirements
-    ret
+    leave               ; Epilogue: destroy the stack frame
+    ret                 ; RAX contains the 'dst' string address

@@ -15,14 +15,14 @@
 
 SECTION .text       ; Section containing code
 
+extern malloc       ; Included in <stdlib.h>
+
+global ft_list_push_front
+
 %define BEGIN_LIST_PTR    rbp-0x08
 %define DATA_PTR          rbp-0x10
 %define NEW_ITEM_PTR      rbp-0x18
 %define NEW_ITEM_SIZ      0x10
-
-extern malloc       ; Included in <stdlib.h>
-
-global ft_list_push_front
 
 ft_list_push_front:
 ; Create the stack frame
@@ -61,5 +61,5 @@ ft_list_push_front:
   mov [r8], r9                  ; Update the head list address with the new item address
 
 .epilogue:
-  leave                         ; Destroy the stack frame
+  leave                         ; Epilogue: destroy the stack frame
   ret

@@ -13,24 +13,25 @@
 ;                     RSI -> const char *s2
 ;------------------------------------------------------------------------------
 
-SECTION .text
+SECTION .text           ; Section containing code
 
-global ft_strcmp        ; Make ft_strcmp callable / visible from outside
+global ft_strcmp        ; Make the function callable / visible from outside
 
 ft_strcmp:
-    xor rax, rax        ; Initialize RAX
-    xor rcx, rcx        ; Initialize RCX
+    push rbp            ; Alignment prologue
+    mov rbp, rsp        ; Anchor the base pointer at the stack position
 
 .compare:
-    mov al, byte [rdi]  ; Store current *s1 in AL
+    mov al, byte [rdi]  ; Store *s1 in AL
     cmp al, 0           ; Test if the end of s1 has been reached
-    jz .done            ; If so, the loop is over
+    jz .done            ; If so, exit loop
 
-    cmp al, byte [rsi]  ; Compare *s1 and current *s2
-    jnz .done           ; If different (ZF=0), the loop is over
+    cmp al, byte [rsi]  ; Compare *s1 and *s2
+    jnz .done           ; If different (ZF=0), exit loop
 
-    inc rdi             ; Else, increment both pointers
-    inc rsi
+                        ; Else
+    inc rdi             ; ++s1
+    inc rsi             ; ++s2
     jmp .compare        ; Loop
 
 .done:
@@ -40,10 +41,19 @@ ft_strcmp:
 ; So far, only the existence of a divergence between s1 and s2 has been tested,
 ; not its value.
 
-; In order to conform with the unsignedness requirement, we must extend
-; value bit width to 32 bits, as expected by the ft_strcmp return type. 
-    movzx eax, byte [rdi]   ; Move current *s1 with zero-extend
-    movzx ecx, byte [rsi]   ; Move current *s2 with zero-extend
+; POSIX.1 specifies only that:
+;   The sign of a nonzero return value shall be determined by the sign of the
+;    difference between the values of the first pair of bytes (both interpreted
+;    as type unsigned char) that differ in the strings being compared.
+; In  glibc,  as in most other implementations, the return value is the 
+;    arithmetic result of subtracting the last compared byte in s2 from the
+;    last compared byte in s1.
+;    (If the two characters are equal, this difference is 0.)
+
+    movzx eax, byte [rdi]   ; Zero-extend character pointed to by s1
+    movzx ecx, byte [rsi]   ; Zero-extend character pointed to by s2
     sub eax, ecx            ; Store return value (*s1-*s2) in EAX
                             ; in accordance with System V ABI requirements
+
+    leave                   ; Epilogue: destroy the stack frame
     ret

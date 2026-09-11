@@ -112,5 +112,5 @@ ft_list_remove_if:
   jmp .compare              ; End of loop, test the next element
 
 .epilogue:
-  leave                     ; Destroy the stack frame
+  leave                     ; Epilogue: destroy the stack frame
   ret

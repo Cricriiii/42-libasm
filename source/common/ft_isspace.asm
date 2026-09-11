@@ -2,7 +2,7 @@
 ;   Executable      : ft_isspace
 ;   Version         : 1.0
 ;   Created date    : 2026-09-07
-;   Last update     : 2026-09-07
+;   Last update     : 2026-09-11
 ;   Author          : Christophe Gajean
 ;   Description     : Assembly implementation of man 3 isspace
 ;                     based on the libc prototype.
@@ -12,37 +12,34 @@
 ;   Registers       : EDI -> int c
 ;------------------------------------------------------------------------------
 
-
 SECTION .text       ; Section containing code
 
-global ft_isspace
+global ft_isspace   ; Make the function callable / visible from outside
 
 ft_isspace:
-    xor rax, rax            ; Reset RAX
+    push rbp        ; Alignment prologue
+    mov rbp, rsp    ; Anchor the base pointer at the stack position
 
-; Test EOF
-    cmp edi, -1             ; Test if 'c' is EOF
-    jz .false               ; If so, return false
+; Start testing
+    cmp edi, -1     ; (c == EOF) ?
+    jz .false       ; If so, false
 
+    cmp edi, 0x20   ; (c == ' ') ?
+    jz .true        ; If so, true
 
-; Test space ' '
-    cmp edi, 0x20
-    jz .true
+    cmp edi, 0x09   ; (c >= '\t') ?
+    jl .false       ; If not, false
 
+    cmp edi, 0x0D   ; (c <= '\r') ?
+    jg .false       ; If not, false
 
-; Test if '\t', '\n', '\v', '\f', '\r'
-; Values range from 0x09 to 0x0D
-    cmp edi, 0x09           ; Test if character is greater or equal '\t'
-    jl .false               ; If not, return false
-
-    cmp edi, 0x0D           ; Test if character is lesser or equal '\r'
-    jg .false               ; If not, return false
-
-                            ; Else, return true
+                    ; Else, true
 .true:
-    mov eax, 1              ; Set return value to true
+    mov eax, 1      ; Set return value to true
+    leave           ; Epilogue: destroy the stack frame
     ret
 
 .false:
-    mov eax, 0              ; Set return value to false
+    mov eax, 0      ; Set return value to false
+    leave           ; Epilogue: destroy the stack frame
     ret

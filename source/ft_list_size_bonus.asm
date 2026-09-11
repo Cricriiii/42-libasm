@@ -33,5 +33,5 @@ ft_list_size:
   jmp .count          ; Loop
 
 .prologue:
-  leave           ; Destroy the stack frame
+  leave           ; Epilogue: destroy the stack frame
   ret
