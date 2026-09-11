@@ -42,7 +42,7 @@ ft_list_remove_if:
 
 ; Save parameters onto the stack
   mov [BEGIN_LIST], rdi     ; Push begin_list
-  mov [DATA_REF], rdi       ; Push data_ref
+  mov [DATA_REF], rsi       ; Push data_ref
   mov [CMP_FCT], rdx        ; Push cmp
   mov [FREE_FCT], rcx       ; Push free_fct
 
@@ -58,8 +58,9 @@ ft_list_remove_if:
   jz .epilogue              ; If so, return
 
 ; Compare current node data field to data_ref
-  mov rdi, [CUR_NODE]       ; Put cur_node->data into RDI
-  mov rsi, [DATA_REF]       ; Pur data_ref in RSI
+  mov rdi, [CUR_NODE]       ; Put &cur_node->data into RDI
+  mov rdi, [rdi]            ; Put cur_node->data into RDI
+  mov rsi, [DATA_REF]       ; Put data_ref in RSI
   call [CMP_FCT]            ; Call the data compare function
 
   cmp eax, 0                ; Test the return of the data compare function
@@ -90,11 +91,11 @@ ft_list_remove_if:
 ;.delete_head:
   mov r9, [BEGIN_LIST]      ; Store t_list **begin_list address
   mov [r9], r8              ; Do *begin_list = cur_node->next
+  jmp .save_recovery_ptr    ; Skip the delete_middle scenario
 
-. delete_middle:
+.delete_middle:
   mov r9, [PREV_NODE]       ; Store the previous node pointer address
   mov [r9+0x08], r8         ; prev_node->next = cur_node->next
-  jmp .save_recovery_ptr    ; Move on
 
 ; Save the recovery node address
 .save_recovery_ptr:
@@ -102,78 +103,13 @@ ft_list_remove_if:
 
 ; Delete the current node
   mov rdi, [CUR_NODE]       ; Store the cur_node address
-  call free_fct             ; Delete cur_node
+  call [FREE_FCT]           ; Delete cur_node
 
 ; Advance pointers
   mov r8, [REC_NODE]        ; Retrieve the restart node address
   mov [CUR_NODE], r8        ; This node becomes the new cur_node
 
   jmp .compare              ; End of loop, test the next element
-
-
-
-
-
-
-
-
-
-
-
-; ; If cur_node->data == data_ref, delete cur_node before advancing pointers
-; .delete:
-; ; Assert if deleting the head node or a middle node
-;   mov r8, [BEGIN_LIST]      ; Save begin_list
-;   mov r8, [r8]              ; Dereference (*begin_list)
-;   cmp r8, [CUR_NODE]        ; Test *begin_list == cur_node
-;   jz .delete_head           ; If equal, delete the head
-;                             ; Else delete a middle node
-
-
-
-; ; Delete a middle node
-; ; Do prev_node-> = cur_node->next
-;   mov r8, [CUR_NODE]        ; Store the current node pointer address
-;   mov r8, [r8+0x08]         ; Fetch the cur_node->next address
-
-;   mov r9, [PREV_NODE]       ; Store the previous node pointer address
-;   mov [r9+0x08], r8         ; prev_node->next = cur_node->next
-
-;   mov [REC_NODE], r8        ; Set aside the next node addr for after deletion
-
-; ; Delete the node
-;   mov rdi, [CUR_NODE]       ; Store the cur_node address
-;   call free_fct             ; Call the free function upon the cur_node address
-
-; ; Advance pointers
-;   mov r8, [REC_NODE]        ; Retrieve the restart node address
-;   mov [CUR_NODE], r8        ; This node becomes the new cur_elem
-
-;   jmp .compare              ; End of loop, test the next element
-
-; .delete_head:
-; ; Do (*begin_list)->next = cur_node->elem
-;   mov r8, [CUR_NODE]        ; Store the current node pointer address
-;   mov r8, [r8+0x08]         ; Fetch the cur_node->next address
-
-;   mov r9, [BEGIN_LIST]      ; Store t_list **begin_list address
-;   mov [r9], r8              ; Do *begin_list = cur_node->next
-
-;   mov [REC_NODE], r8        ; Set aside the next node addr for after deletion
-
-; ; Delete the node
-;   mov rdi, [CUR_NODE]       ; Store the cur_node address
-;   call free_fct             ; Call the free function upon the cur_node address
-
-; ; Advance pointers
-;   mov r8, [REC_NODE]        ; Retrieve the restart node address
-;   mov [CUR_NODE], r8        ; This node becomes the new cur_elem
-
-;   jmp .compare              ; End of loop, test the next element
-
-
-
-
 
 .epilogue:
   leave                     ; Destroy the stack frame

@@ -178,6 +178,6 @@ ft_list_sort:
 
   jmp .advance_pointers_swap     ; Move on to the next nodeents
 
-.epilogue
+.epilogue:
   leave                     ; Destroy the stack frame
   ret
