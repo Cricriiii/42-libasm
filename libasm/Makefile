@@ -5,70 +5,78 @@
 #                                                     +:+ +:+         +:+      #
 #    By: fox <fox@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2026/09/13 17:50:35 by fox               #+#    #+#              #
-#    Updated: 2026/09/13 18:35:52 by fox              ###   ########.fr        #
+#    Created: 2026/09/13 16:42:36 by fox               #+#    #+#              #
+#    Updated: 2026/09/13 17:50:53 by fox              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
+
+# ---------------------------------------------------------------------------- #
+# compile                                                                      #
+# ---------------------------------------------------------------------------- #
+
+ASM_CMP			:= nasm
+C_CMP			:= cc
+CFLAGS			:= -std=c23 -g3
 
 
 # ---------------------------------------------------------------------------- #
 # files                                                                        #
 # ---------------------------------------------------------------------------- #
 
-LIBASM_DIR		:= libasm
-LIBCPP_DIR		:= libcpp
-TESTER_CPP_DIR	:= tester_cpp
-TESTER_RUNNER	:= $(TESTER_CPP_DIR)/libasm_tester
+NAME			:= libasm
+SRC_DIR			:= source
+COM_DIR			:= common
+OBJ_DIR			:= .object
+OBJ_COM_DIR		:= $(OBJ_DIR)/common
+ARCHIVE_A		:= $(NAME).a
+
+FILES			:= $(shell find $(SRC_DIR) -type f -name '*.asm')
+FILES_MANDATORY	:= $(filter-out %_bonus.asm,$(FILES))
+FILES_BONUS		:= $(filter %_bonus.asm,$(FILES))
+
+OBJS_MANDATORY	:= $(patsubst $(SRC_DIR)/%.asm,$(OBJ_DIR)/%.o,$(FILES_MANDATORY))
+OBJS_BONUS		:= $(patsubst $(SRC_DIR)/%.asm,$(OBJ_DIR)/%.o,$(FILES_BONUS))
+OBJS			:= $(OBJS_MANDATORY) $(OBJS_BONUS)
 
 
 # ---------------------------------------------------------------------------- #
 # make                                                                         #
 # ---------------------------------------------------------------------------- #
 
-## Build libasm 'mandatory' archive and tester
-all:
-	+$(MAKE) -C $(LIBASM_DIR) all
-	+$(MAKE) then
+## Build libasm.a
+all: $(ARCHIVE_A)
 
-## Build libasm 'bonus' archive and tester
-bonus:
-	+$(MAKE) -C $(LIBASM_DIR) bonus
-	+$(MAKE) then
+$(ARCHIVE_A): $(OBJS_MANDATORY)
+	ar rcs $@ $^
 
-then:
-	+$(MAKE) -C $(LIBCPP_DIR) all
-	+$(MAKE) -C $(TESTER_CPP_DIR) all
+bonus: $(OBJS)
+	ar rcs $(ARCHIVE_A) $^
 
-## Clear every directory and rebuild everything
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.asm
+	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(OBJ_COM_DIR)
+	$(ASM_CMP) -f elf64 -g3 -F dwarf $< -o $@
+
+## Call 'fclean' and 'all' targets
 re:
 	+$(MAKE) fclean
-	+$(MAKE) bonus
+	+$(MAKE) all
 
 
-# ---------------------------------------------------------------------------- #
-# make                                                                         #
-# ---------------------------------------------------------------------------- #
-
-## Launch the test executable
-test:
-	@./$(TESTER_RUNNER)
-
-	
 # ---------------------------------------------------------------------------- #
 # clean                                                                        #
 # ---------------------------------------------------------------------------- #
 
-## Call all the 'clean' targets
+## Delete the object folder
 clean:
-	+$(MAKE) -C $(LIBASM_DIR) clean
-	+$(MAKE) -C $(LIBCPP_DIR) clean
-	+$(MAKE) -C $(TESTER_CPP_DIR) clean
+	rm -rf $(OBJ_DIR)
 
-## Call all the 'fclean' targets
+## Call 'clean' and delete the libasm.a file
 fclean:
-	+$(MAKE) -C $(LIBASM_DIR) fclean
-	+$(MAKE) -C $(LIBCPP_DIR) fclean
-	+$(MAKE) -C $(TESTER_CPP_DIR) fclean
+	+$(MAKE) clean
+	rm -f $(ARCHIVE_A)
 
 
 # ---------------------------------------------------------------------------- #
@@ -91,4 +99,4 @@ help:
 	@echo
 
 
-.PHONY: all bonus then re test clean fclean help
+.PHONY: all re test clean fclean help bonus

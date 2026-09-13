@@ -54,7 +54,7 @@ ft_list_remove_if:
 
 .compare:
 ; Test if the end of the list is reached
-  cmp [CUR_NODE], 0         ; Test if list is empty
+  cmp qword [CUR_NODE], 0   ; Test if list is empty
   jz .epilogue              ; If so, return
 
 ; Compare current node data field to data_ref

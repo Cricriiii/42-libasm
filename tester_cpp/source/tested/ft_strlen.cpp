@@ -1,28 +1,16 @@
-#include <random>
-#include <string>
+#include "tester_cpp.hpp"
+
+/**
+ * These headers are used by this test routine.
+ */
+#include "libasm_decl.hpp"
 #include <cstring>
-#include <cassert>
-#include <iostream>
 
-extern "C" size_t ft_strlen(const char *s);
+/**
+ * Test routine.
+ */
 
-std::string generate_random_string(std::mt19937 &rng, size_t max_len)
-{
-    std::uniform_int_distribution<size_t> len_dist(0, max_len);
-    std::uniform_int_distribution<int>    char_dist(1, 255);
-
-    size_t len = len_dist(rng);
-    std::string s;
-    s.reserve(len);
-
-    for (size_t i = 0; i < len; ++i)
-        s.push_back(static_cast<char>(char_dist(rng)));
-
-    return s;
-}
-
-int main(void)
-{
+TEST(ft_strlen_random_string) {
     std::random_device rd;
     std::mt19937 rng(rd());
 
@@ -44,5 +32,4 @@ int main(void)
     }
 
     std::cout << (nb_tests - failures) << "/" << nb_tests << " OK\n";
-    return (failures != 0);
 }
