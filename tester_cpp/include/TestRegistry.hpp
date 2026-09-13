@@ -25,8 +25,8 @@ public:
 
 private:
     TestRegistry() = default;
-    TestRegistry(const TestRegistry& other);
-    TestRegistry& operator=(const TestRegistry& other);
+    TestRegistry(const TestRegistry& other) = delete;
+    TestRegistry& operator=(const TestRegistry& other) = delete;
 };
 
 struct AutoRegister {
