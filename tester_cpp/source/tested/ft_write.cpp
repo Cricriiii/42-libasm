@@ -8,18 +8,6 @@
 #include "libasm_decl.hpp"
 
 /**
- * Helper functions
- */
-
-int unopened_fd(int fd) {
-    /* Close errno anyway, which sets errno to EBADF */
-    close(fd);
-    /* Reset errno */
-    set_errno(0);
-    return fd;
-}
-
-/**
  * Test routines
  */
 TEST(ft_write_unopened_fd) {
@@ -105,7 +93,7 @@ TEST(ft_write_excess_write) {
 
     for (size_t i = 0; i < res.n_tested; ++i) {
 
-        size_t len = distribution(rng);
+        size_t len{distribution(rng)};
 
         set_errno(0);
         ssize_t ret_1 = ft_write(fd_out, str, len);

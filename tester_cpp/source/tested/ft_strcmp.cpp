@@ -48,7 +48,7 @@ TEST(ft_strcmp_equal_random_string) {
     TestResult res{};
     res.n_tested = TestSize::M;
 
-    for (int i = 0; i < res.n_tested; ++i) {
+    for (size_t i = 0; i < res.n_tested; ++i) {
         try {
             std::string s = generateRandomString(rng, TestSize::XXL);
 
@@ -70,7 +70,7 @@ TEST(ft_strcmp_different_random_string) {
     TestResult res{};
     res.n_tested = TestSize::L;
 
-    for (int i = 0; i < res.n_tested; ++i) {
+    for (size_t i = 0; i < res.n_tested; ++i) {
         try {
             std::string s1 = generateRandomString(rng, TestSize::M);
             std::string s2 = generateRandomString(rng, TestSize::M);

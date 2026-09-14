@@ -43,7 +43,7 @@ TEST(ft_strdup_random_string) {
     TestResult res{};
     res.n_tested = TestSize::XXL;
 
-    for (int i = 0; i < res.n_tested; ++i) {
+    for (size_t i = 0; i < res.n_tested; ++i) {
         char *ft_strdup_ptr, *strdup_ptr;
 
         try {

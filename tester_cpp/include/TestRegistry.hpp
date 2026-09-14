@@ -79,5 +79,5 @@ TestResult testRegisterIntegrity(Function function, Args&&... args) {
 
     CalleeSavedState after = captureCalleeSavedRegisters();
 
-    return TestResult{1, before == after ? 0 : 1};
+    return TestResult{1, static_cast<size_t>(before == after ? 0 : 1)};
 }

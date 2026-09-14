@@ -52,7 +52,7 @@ TEST(ft_strcpy_random_string) {
     TestResult res{};
     res.n_tested = TestSize::M;
 
-    for (int i = 0; i < res.n_tested; ++i) {
+    for (size_t i = 0; i < res.n_tested; ++i) {
         char *ft_strcpy_ptr, *strcpy_ptr;
 
         try {
