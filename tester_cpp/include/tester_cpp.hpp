@@ -1,14 +1,13 @@
 #pragma once
 
-#include <iostream>
-#include <string>
-#include <random>
+#include <sys/wait.h>
+#include <unistd.h>
 
 #include <functional>
+#include <iostream>
+#include <random>
+#include <string>
 #include <utility>
 
-#include <unistd.h>
-#include <sys/wait.h>
-
-#include "libcpp.hpp"
 #include "TestRegistry.hpp"
+#include "libcpp.hpp"

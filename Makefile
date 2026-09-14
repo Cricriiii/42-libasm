@@ -15,14 +15,14 @@
 # files                                                                        #
 # ---------------------------------------------------------------------------- #
 
-LIBASM_DIR		:= libasm
-LIBCPP_DIR		:= libcpp
+LIBASM_DIR			:= libasm
+LIBCPP_DIR			:= libcpp
 TESTER_CPP_DIR	:= tester_cpp
-TESTER_RUNNER	:= $(TESTER_CPP_DIR)/libasm_tester
+TESTER_RUNNER		:= $(TESTER_CPP_DIR)/libasm_tester
 
 
 # ---------------------------------------------------------------------------- #
-# make                                                                         #
+# build                                                                        #
 # ---------------------------------------------------------------------------- #
 
 ## Build libasm 'mandatory' archive and tester
@@ -46,7 +46,7 @@ re:
 
 
 # ---------------------------------------------------------------------------- #
-# make                                                                         #
+# build                                                                        #
 # ---------------------------------------------------------------------------- #
 
 ## Launch the test executable
@@ -75,6 +75,10 @@ fclean:
 # misc                                                                         #
 # ---------------------------------------------------------------------------- #
 
+## Format files
+format:
+	find . -name "*.cpp" -o -name "*.hpp" | xargs clang-format -i
+
 # Provided by https://gitlab.com/depressiveRobot/make-help/blob/master/help.mk
 ## Show this help
 help:
@@ -91,4 +95,4 @@ help:
 	@echo
 
 
-.PHONY: all bonus then re test clean fclean help
+.PHONY: all bonus then re test clean fclean format help

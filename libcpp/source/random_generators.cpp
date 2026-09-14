@@ -1,8 +1,8 @@
 #include "libcpp.hpp"
 
-std::string generate_random_string(std::mt19937 &rng, size_t max_len) {
+std::string generate_random_string(std::mt19937& rng, size_t max_len) {
     std::uniform_int_distribution<size_t> len_dist(0, max_len);
-    std::uniform_int_distribution<int>    char_dist(1, 255);
+    std::uniform_int_distribution<int> char_dist(1, 255);
 
     size_t len = len_dist(rng);
     std::string s;

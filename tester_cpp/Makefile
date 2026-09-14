@@ -12,30 +12,30 @@ CXXFLAGS	:= -std=c++23 -Wall -Wextra -Werror -g3 -O0
 
 # Librairies
 LIBCPP			:= libcpp
-LIBCPP_INC		:= ../$(LIBCPP)/include
+LIBCPP_INC	:= ../$(LIBCPP)/include
 LIBCPP_A		:= ../$(LIBCPP)/$(LIBCPP).a
 
 LIBASM			:= libasm
 LIBASM_A		:= ../$(LIBASM)/$(LIBASM).a
 
-LIBS			:= $(LIBCPP_A) $(LIBASM_A) 
+LIBS				:= $(LIBCPP_A) $(LIBASM_A) 
 
 # Files
 
-RUNNER_NAME		:= $(LIBASM)_tester
+RUNNER_NAME			:= $(LIBASM)_tester
 
-INC_DIR			:= include
-INC_TESTED		:= $(INC_DIR)/tested
-SRC_DIR			:= source
-OBJ_DIR			:= .object
+INC_DIR					:= include
+INC_TESTED			:= $(INC_DIR)/tested
+SRC_DIR					:= source
+OBJ_DIR					:= .object
 OBJ_TESTED_DIR	:= $(OBJ_DIR)/tested
 
 FILES			:= $(shell find $(SRC_DIR) -type f -name '*.cpp')
-OBJECTS			:= $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(FILES))
+OBJECTS		:= $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(FILES))
 
 
 # ---------------------------------------------------------------------------- #
-# make                                                                         #
+# build                                                                        #
 # ---------------------------------------------------------------------------- #
 
 ## Build the tester

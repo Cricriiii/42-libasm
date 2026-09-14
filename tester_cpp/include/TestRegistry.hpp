@@ -1,30 +1,43 @@
 #pragma once
 
-#include <vector>
-#include <string>
 #include <functional>
-#include <utility>
 #include <limits>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "ASMRegisters.hpp"
+
+enum TestSize : size_t {
+    XS = 100,
+    S = 500,
+    M = 1000,
+    L = 5000,
+    XL = 10000,
+    XXL = 50000,
+    XXXL = 100000
+};
 
 struct TestResult {
 public:
     int n_tested;
     int n_failures;
 
-    TestResult(): n_tested {0}, n_failures {0} {}
-    TestResult(int n): n_tested {n}, n_failures {0} {}
-    TestResult(int n, int m): n_tested {n}, n_failures {m} {}
+    TestResult() : n_tested{0}, n_failures{0} {
+    }
+    TestResult(int n) : n_tested{n}, n_failures{0} {
+    }
+    TestResult(int n, int m) : n_tested{n}, n_failures{m} {
+    }
 };
 
 struct TestCase {
-    std::string                 name;
+    std::string name;
     std::function<TestResult()> fn;
 };
 
 class TestRegistry {
-public: 
+public:
     static TestRegistry& getInstance() {
         static TestRegistry reg;
         return reg;
@@ -43,27 +56,21 @@ private:
 };
 
 struct AutoRegister {
-    AutoRegister(const std::string &name, std::function<TestResult()> fn) {
+    AutoRegister(const std::string& name, std::function<TestResult()> fn) {
         TestRegistry::getInstance().add(name, std::move(fn));
     }
 };
 
-#define TEST(name)                                              \
-    TestResult name();                                          \
-    static AutoRegister reg_##name(#name, name);                \
+#define TEST(name)                               \
+    TestResult name();                           \
+    static AutoRegister reg_##name(#name, name); \
     TestResult name()
 
-
-
 template <typename Function, typename... Args>
-TestResult test_register_integrity(Function function, Args&&... args)
-{
+TestResult testRegisterIntegrity(Function function, Args&&... args) {
     CalleeSavedState before = captureCalleeSavedRegisters();
 
-    std::invoke(
-        function,
-        std::forward<Args>(args)...
-    );
+    std::invoke(function, std::forward<Args>(args)...);
 
     CalleeSavedState after = captureCalleeSavedRegisters();
 

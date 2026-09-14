@@ -15,7 +15,7 @@
 # compile                                                                      #
 # ---------------------------------------------------------------------------- #
 
-CXX			:= g++
+CXX				:= g++
 CXXFLAGS	:= -std=c++23 -Wall -Werror -Wextra -g3
 
 
@@ -23,18 +23,18 @@ CXXFLAGS	:= -std=c++23 -Wall -Werror -Wextra -g3
 # files                                                                        #
 # ---------------------------------------------------------------------------- #
 
-NAME		:= libcpp
+NAME			:= libcpp
 INC_DIR		:= include
 SRC_DIR		:= source
 OBJ_DIR		:= .object
 ARCHIVE_A	:= $(NAME).a
 
-FILES		:= $(shell find $(SRC_DIR) -type f -name "*.cpp")
-OBJS		:= $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(FILES))
+FILES			:= $(shell find $(SRC_DIR) -type f -name "*.cpp")
+OBJS			:= $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(FILES))
 
 
 # ---------------------------------------------------------------------------- #
-# make                                                                         #
+# build                                                                        #
 # ---------------------------------------------------------------------------- #
 
 ## Build the archive

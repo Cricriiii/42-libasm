@@ -16,7 +16,7 @@
 # ---------------------------------------------------------------------------- #
 
 ASM_CMP			:= nasm
-C_CMP			:= cc
+C_CMP				:= cc
 CFLAGS			:= -std=c23 -g3
 
 
@@ -24,24 +24,24 @@ CFLAGS			:= -std=c23 -g3
 # files                                                                        #
 # ---------------------------------------------------------------------------- #
 
-NAME			:= libasm
+NAME				:= libasm
 SRC_DIR			:= source
 COM_DIR			:= common
 OBJ_DIR			:= .object
-OBJ_COM_DIR		:= $(OBJ_DIR)/common
+OBJ_COM_DIR	:= $(OBJ_DIR)/common
 ARCHIVE_A		:= $(NAME).a
 
-FILES			:= $(shell find $(SRC_DIR) -type f -name '*.asm')
+FILES						:= $(shell find $(SRC_DIR) -type f -name '*.asm')
 FILES_MANDATORY	:= $(filter-out %_bonus.asm,$(FILES))
-FILES_BONUS		:= $(filter %_bonus.asm,$(FILES))
+FILES_BONUS			:= $(filter %_bonus.asm,$(FILES))
 
 OBJS_MANDATORY	:= $(patsubst $(SRC_DIR)/%.asm,$(OBJ_DIR)/%.o,$(FILES_MANDATORY))
-OBJS_BONUS		:= $(patsubst $(SRC_DIR)/%.asm,$(OBJ_DIR)/%.o,$(FILES_BONUS))
-OBJS			:= $(OBJS_MANDATORY) $(OBJS_BONUS)
+OBJS_BONUS			:= $(patsubst $(SRC_DIR)/%.asm,$(OBJ_DIR)/%.o,$(FILES_BONUS))
+OBJS						:= $(OBJS_MANDATORY) $(OBJS_BONUS)
 
 
 # ---------------------------------------------------------------------------- #
-# make                                                                         #
+# build                                                                        #
 # ---------------------------------------------------------------------------- #
 
 ## Build libasm.a
