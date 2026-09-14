@@ -12,15 +12,17 @@
 
 TEST(ft_strlen_null_string) {
     std::vector<std::function<size_t(const char *)> > f {ft_strlen, strlen};
-    int failures = 0;
+    
+    TestResult res {};
 
     for (auto fn: f) {
         pid_t pid = fork();
-        int status = 0;
-
+        
         if (pid > 0) {
+            ++res.n_tested;
+            int status = 0;
             if (waitpid(pid, &status, 0) == -1 || !WIFSIGNALED(status)) {
-                ++failures;
+                ++res.n_failures;
             }
 
         } else if (pid == 0) {
@@ -29,21 +31,21 @@ TEST(ft_strlen_null_string) {
             _exit(EXIT_FAILURE);
         } else {
             std::cerr << "ft_strlen_null_string: fork failed\n";
-            ++failures;
+            ++res.n_failures;
         }
     }
-
-    std::cout << f.size() - failures << "/" << f.size() << " OK\n";
+    return res;
 }
 
 TEST(ft_strlen_random_string) {
     std::random_device rd;
     std::mt19937 rng(rd());
 
-    const int nb_tests = 100000;
-    int failures = 0;
+    TestResult res {};
+    res.n_tested = 100000;
+    
 
-    for (int i = 0; i < nb_tests; ++i)
+    for (int i = 0; i < res.n_tested; ++i)
     {
         std::string s = generate_random_string(rng, 500);
         size_t expected = strlen(s.c_str());
@@ -53,9 +55,8 @@ TEST(ft_strlen_random_string) {
         {
             std::cerr << "FAIL (len=" << s.size() << ", expected="
                       << expected << ", got=" << got << ")\n";
-            ++failures;
+            ++res.n_failures;
         }
     }
-
-    std::cout << (nb_tests - failures) << "/" << nb_tests << " OK\n";
+    return res;
 }

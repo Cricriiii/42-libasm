@@ -5,9 +5,18 @@
 #include <functional>
 #include <utility>
 
+struct TestResult {
+public:
+    int n_tested;
+    int n_failures;
+
+    TestResult(): n_tested {0}, n_failures {0} {}
+    TestResult(int n): n_tested {n}, n_failures {0} {}
+};
+
 struct TestCase {
-    std::string             name;
-    std::function<void()>   fn;
+    std::string                 name;
+    std::function<TestResult()> fn;
 };
 
 class TestRegistry {
@@ -17,7 +26,7 @@ public:
         return reg;
     }
 
-    void add(std::string name, std::function<void()> fn) {
+    void add(std::string name, std::function<TestResult()> fn) {
         tests.push_back({std::move(name), std::move(fn)});
     }
 
@@ -30,12 +39,12 @@ private:
 };
 
 struct AutoRegister {
-    AutoRegister(const std::string &name, std::function<void()> fn) {
+    AutoRegister(const std::string &name, std::function<TestResult()> fn) {
         TestRegistry::getInstance().add(name, std::move(fn));
     }
 };
 
 #define TEST(name)                                              \
-    void name();                                                \
+    TestResult name();                                          \
     static AutoRegister reg_##name(#name, name);                \
-    void name()
+    TestResult name()

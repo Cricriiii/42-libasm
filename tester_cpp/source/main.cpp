@@ -2,15 +2,29 @@
 #include "TestRegistry.hpp"
 
 int main(void) {
-    int failures = 0;
-    for (auto &t : TestRegistry::getInstance().tests) {{
-        std::cout << "[RUN] " << t.name << "... ";
+    TestResult error_report {};
+    const char *outcome[] = {"[FAIL] ", "[SUCCESS] "};
+
+    for (auto &t : TestRegistry::getInstance().tests) {
+        std::cout << "[RUN] " << t.name << "... \n";
+
         try {
-            t.fn();
-            std::cout << "OK\n";
+            TestResult result = t.fn();
+            error_report.n_tested += result.n_tested;
+            error_report.n_failures += result.n_failures;
+
+            std::cout   << outcome[result.n_failures == 0] << t.name 
+                        << "   (" << (result.n_tested - result.n_failures)
+                        << "/" << result.n_tested << ")\n";
+
+        } catch (const std::exception &e) {
+            std::cerr << "[ERROR] " << e.what() << "\n";
+            ++error_report.n_failures;
+
         } catch (...) {
-            std::cout << "FAIL\n"; ++failures;
+            std::cerr << "[ERROR] Unknown exception\n";
+            ++error_report.n_failures;
         }
-    }}
-    return failures != 0;
+    }
+    return error_report.n_failures != 0;
 }
