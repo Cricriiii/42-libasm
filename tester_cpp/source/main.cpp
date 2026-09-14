@@ -14,7 +14,7 @@ int main(void) {
             error_report.n_tested += result.n_tested;
             error_report.n_failures += result.n_failures;
 
-            std::cout << outcome[result.n_failures == 0] << t.name << "   ("
+            std::cout << outcome[result.n_tested && result.n_failures == 0] << t.name << "   ("
                       << (result.n_tested - result.n_failures) << "/"
                       << result.n_tested << ")\n";
 

@@ -50,7 +50,7 @@ TEST(ft_strcmp_equal_random_string) {
 
     for (int i = 0; i < res.n_tested; ++i) {
         try {
-            std::string s = generate_random_string(rng, TestSize::XXL);
+            std::string s = generateRandomString(rng, TestSize::XXL);
 
             if (ft_strcmp(s.c_str(), s.c_str()) !=
                 strcmp(s.c_str(), s.c_str())) {
@@ -72,8 +72,8 @@ TEST(ft_strcmp_different_random_string) {
 
     for (int i = 0; i < res.n_tested; ++i) {
         try {
-            std::string s1 = generate_random_string(rng, TestSize::M);
-            std::string s2 = generate_random_string(rng, TestSize::M);
+            std::string s1 = generateRandomString(rng, TestSize::M);
+            std::string s2 = generateRandomString(rng, TestSize::M);
 
             if (ft_strcmp(s1.c_str(), s2.c_str()) !=
                 strcmp(s1.c_str(), s2.c_str())) {

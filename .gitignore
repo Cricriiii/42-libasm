@@ -30,3 +30,4 @@ temp/
 executable/
 *.a
 libasm_tester
+*.cpp

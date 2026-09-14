@@ -47,7 +47,7 @@ TEST(ft_strdup_random_string) {
         char *ft_strdup_ptr, *strdup_ptr;
 
         try {
-            std::string s = generate_random_string(rng, TestSize::M);
+            std::string s = generateRandomString(rng, TestSize::M);
 
             ft_strdup_ptr = ft_strdup(s.c_str());
             strdup_ptr = strdup(s.c_str());
@@ -67,5 +67,5 @@ TEST(ft_strdup_random_string) {
 }
 
 TEST(ft_strdup_register_integrity) {
-	return testRegisterIntegrity("hello world");
+    return testRegisterIntegrity(ft_strdup, "hello world");
 }

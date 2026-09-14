@@ -6,9 +6,14 @@
 #include <utility>
 #include <vector>
 
+#include <unistd.h>
+#include <fcntl.h>
+
 #include "ASMRegisters.hpp"
 
 enum TestSize : size_t {
+    XXXS = 10,
+    XXS = 50,
     XS = 100,
     S = 500,
     M = 1000,
@@ -20,14 +25,14 @@ enum TestSize : size_t {
 
 struct TestResult {
 public:
-    int n_tested;
-    int n_failures;
+    size_t n_tested;
+    size_t n_failures;
 
     TestResult() : n_tested{0}, n_failures{0} {
     }
-    TestResult(int n) : n_tested{n}, n_failures{0} {
+    TestResult(size_t n) : n_tested{n}, n_failures{0} {
     }
-    TestResult(int n, int m) : n_tested{n}, n_failures{m} {
+    TestResult(size_t n, size_t m) : n_tested{n}, n_failures{m} {
     }
 };
 

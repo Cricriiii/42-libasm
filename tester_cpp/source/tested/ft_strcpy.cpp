@@ -56,7 +56,7 @@ TEST(ft_strcpy_random_string) {
         char *ft_strcpy_ptr, *strcpy_ptr;
 
         try {
-            std::string s = generate_random_string(rng, TestSize::M);
+            std::string s = generateRandomString(rng, TestSize::M);
 
             ft_strcpy_ptr = static_cast<char*>(std::malloc(s.size() + 1));
             strcpy_ptr = static_cast<char*>(std::malloc(s.size() + 1));
@@ -91,7 +91,7 @@ TEST(ft_strcpy_unfit_destination) {
 
         std::string s{};
         do {
-            s = generate_random_string(rng, len_max);
+            s = generateRandomString(rng, len_max);
         } while (s.size() <= 100);
 
         for (auto fn : f) {

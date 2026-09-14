@@ -53,7 +53,7 @@ TEST(ft_strlen_random_string) {
     res.n_tested = TestSize::M;
 
     for (int i = 0; i < res.n_tested; ++i) {
-        std::string s = generate_random_string(rng, TestSize::S);
+        std::string s = generateRandomString(rng, TestSize::S);
         size_t expected = strlen(s.c_str());
         size_t got = ft_strlen(s.c_str());
 
