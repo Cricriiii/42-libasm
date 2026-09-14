@@ -11,8 +11,10 @@
  */
 
 TEST(ft_strlen_null_string) {
-    std::vector<std::function<size_t(const char *)> > f {ft_strlen, strlen};
-    
+    std::vector<std::function<size_t(const char *)>> f {
+        ft_strlen, strlen
+    };
+
     TestResult res {};
 
     for (auto fn: f) {
@@ -44,7 +46,6 @@ TEST(ft_strlen_random_string) {
     TestResult res {};
     res.n_tested = 100000;
     
-
     for (int i = 0; i < res.n_tested; ++i)
     {
         std::string s = generate_random_string(rng, 500);
@@ -59,4 +60,8 @@ TEST(ft_strlen_random_string) {
         }
     }
     return res;
+}
+
+TEST(ft_strlen_register_integrity) { 
+    return test_register_integrity(ft_strlen, "hello world");
 }

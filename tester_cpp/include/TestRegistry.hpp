@@ -4,6 +4,9 @@
 #include <string>
 #include <functional>
 #include <utility>
+#include <limits>
+
+#include "ASMRegisters.hpp"
 
 struct TestResult {
 public:
@@ -12,6 +15,7 @@ public:
 
     TestResult(): n_tested {0}, n_failures {0} {}
     TestResult(int n): n_tested {n}, n_failures {0} {}
+    TestResult(int n, int m): n_tested {n}, n_failures {m} {}
 };
 
 struct TestCase {
@@ -48,3 +52,20 @@ struct AutoRegister {
     TestResult name();                                          \
     static AutoRegister reg_##name(#name, name);                \
     TestResult name()
+
+
+
+template <typename Function, typename... Args>
+TestResult test_register_integrity(Function function, Args&&... args)
+{
+    CalleeSavedState before = captureCalleeSavedRegisters();
+
+    std::invoke(
+        function,
+        std::forward<Args>(args)...
+    );
+
+    CalleeSavedState after = captureCalleeSavedRegisters();
+
+    return TestResult{1, before == after ? 0 : 1};
+}
