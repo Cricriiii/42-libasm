@@ -1,5 +1,10 @@
 #include "libcpp.hpp"
 
+std::mt19937 getSeed() {
+    std::random_device rd;
+    return std::mt19937{rd()};
+}
+
 std::string generateRandomString(std::mt19937& rng, size_t max_len) {
     std::uniform_int_distribution<size_t> len_dist(0, max_len);
     std::uniform_int_distribution<int> char_dist(1, 255);
@@ -13,3 +18,4 @@ std::string generateRandomString(std::mt19937& rng, size_t max_len) {
 
     return s;
 }
+

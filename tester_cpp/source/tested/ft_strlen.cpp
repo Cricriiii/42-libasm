@@ -46,8 +46,7 @@ TEST(ft_strlen_null_string) {
 }
 
 TEST(ft_strlen_random_string) {
-    std::random_device rd;
-    std::mt19937 rng(rd());
+    std::mt19937 rng{getSeed()};
 
     TestResult res{};
     res.n_tested = TestSize::M;

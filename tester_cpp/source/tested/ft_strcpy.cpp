@@ -46,8 +46,7 @@ TEST(ft_strcpy_null_string) {
 }
 
 TEST(ft_strcpy_random_string) {
-    std::random_device rd;
-    std::mt19937 rng(rd());
+    std::mt19937 rng{getSeed()};
 
     TestResult res{};
     res.n_tested = TestSize::M;
@@ -79,9 +78,9 @@ TEST(ft_strcpy_random_string) {
 }
 
 TEST(ft_strcpy_unfit_destination) {
+    std::mt19937 rng{getSeed()};
+
     std::vector<std::function<char*(char*, const char*)>> f{ft_strcpy, strcpy};
-    std::random_device rd;
-    std::mt19937 rng(rd());
 
     TestResult res{};
 

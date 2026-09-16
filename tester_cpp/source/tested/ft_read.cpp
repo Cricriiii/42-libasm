@@ -50,8 +50,7 @@ TEST(ft_read_null_string) {
 
 TEST(ft_read_smaller_read) {
     /* Generate the random engine */
-    std::random_device rd;
-    std::mt19937 rng(rd());
+    std::mt19937 rng{getSeed()};
     
     /* Generate the random sample file */
     std::uniform_int_distribution<size_t> distribution(1, TestSize::XXXL);
@@ -101,8 +100,7 @@ TEST(ft_read_smaller_read) {
 
 TEST(ft_read_exact_read) {
     /* Generate the random engine */
-    std::random_device rd;
-    std::mt19937 rng(rd());
+    std::mt19937 rng{getSeed()};
     
     /* Generate the random sample file */
     std::uniform_int_distribution<size_t> distribution(1, TestSize::XXXL);

@@ -24,8 +24,7 @@ const std::vector<char> charSet = asciiTable();
 
 
 static void whitespaceSequence(std::string &s) {
-    std::random_device rd;
-    std::mt19937 rng(rd());
+    std::mt19937 rng{getSeed()};
 
     std::uniform_int_distribution<size_t> wsp_distrib(0, whitespaces.size() - 1);
     std::uniform_int_distribution<size_t> length_distrib(1, TestSize::L);
@@ -38,8 +37,7 @@ static void whitespaceSequence(std::string &s) {
 }
 
 static int signSequence(std::string &s) {
-    std::random_device rd;
-    std::mt19937 rng(rd());
+    std::mt19937 rng{getSeed()};
 
     std::uniform_int_distribution<size_t> sign_distrib(0, signs.size() - 1);
     std::uniform_int_distribution<size_t> length_distrib(1, TestSize::L);
@@ -57,19 +55,7 @@ static int signSequence(std::string &s) {
     return sign_value;
 }
 
-static int randomIntValue() {
-    std::random_device rd;
-    std::mt19937 rng(rd());
-
-    std::uniform_int_distribution<int> range(0, std::numeric_limits<int>::max());
-
-    return range(rng);
-}
-
 TEST(ft_atoi_base_whitespaces_only) {
-    std::random_device rd;
-    std::mt19937 rng(rd());
-
     TestResult res{TestSize::M};
 
     std::uniform_int_distribution<size_t> wsp_distrib(0, whitespaces.size() - 1);
@@ -88,9 +74,6 @@ TEST(ft_atoi_base_whitespaces_only) {
 }
 
 TEST(ft_atoi_base_signs_only) {
-    std::random_device rd;
-    std::mt19937 rng(rd());
-
     TestResult res{TestSize::M};
 
     std::uniform_int_distribution<size_t> char_distrib(0, charSet.size() - 1);
@@ -98,7 +81,7 @@ TEST(ft_atoi_base_signs_only) {
 
     for (size_t i = 0; i < res.n_tested; ++i) {
         std::string sample_string{};
-        int sign_value = signSequence(sample_string);
+        auto sign_value = signSequence(sample_string);
         sample_string.push_back('1');
 
         if (ft_atoi_base(const_cast<char*>(sample_string.c_str()), const_cast<char*>("01")) != 1 * sign_value) {
@@ -109,18 +92,15 @@ TEST(ft_atoi_base_signs_only) {
 }
 
 TEST(ft_atoi_base_whitespaces_signs_int_values) {
-    std::random_device rd;
-    std::mt19937 rng(rd());
-
     TestResult res{TestSize::M};
 
     for (size_t i = 0; i < res.n_tested; ++i) {
 
         std::string sample_string{};
         whitespaceSequence(sample_string);
-        int sign_value = signSequence(sample_string);
+        auto sign_value = signSequence(sample_string);
         
-        int value = randomIntValue();
+        auto value = randomIntegerValue<int>();
         sample_string += std::to_string(value);
 
         if (ft_atoi_base(const_cast<char *>(sample_string.c_str()), const_cast<char *>("0123456789")) != value * sign_value) {
@@ -132,18 +112,15 @@ TEST(ft_atoi_base_whitespaces_signs_int_values) {
 }
 
 TEST(ft_atoi_base_whitespaces_signs_int_garbage_values) {
-    std::random_device rd;
-    std::mt19937 rng(rd());
-
     TestResult res{TestSize::M};
 
     for (size_t i = 0; i < res.n_tested; ++i) {
 
         std::string sample_string{};
         whitespaceSequence(sample_string);
-        int sign_value = signSequence(sample_string);
+        auto sign_value = signSequence(sample_string);
         
-        int value = randomIntValue();
+        auto value = randomIntegerValue<int>();
         sample_string += std::to_string(value);
         sample_string += "garbage";
 
@@ -156,11 +133,10 @@ TEST(ft_atoi_base_whitespaces_signs_int_garbage_values) {
 }
 
 TEST(ft_atoi_base_wrong_base) {
-
     TestResult res{};
 
     std::string sample_string{};
-    int value = randomIntValue();
+    auto value = randomIntegerValue<int>();
     sample_string += std::to_string(value);
 
     std::string base{"0123456789"};

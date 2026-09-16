@@ -38,8 +38,7 @@ TEST(ft_strdup_null_string) {
 }
 
 TEST(ft_strdup_random_string) {
-    std::random_device rd;
-    std::mt19937 rng(rd());
+    std::mt19937 rng{getSeed()};
 
     TestResult res{};
     res.n_tested = TestSize::XXL;

@@ -43,8 +43,7 @@ TEST(ft_strcmp_null_string) {
 }
 
 TEST(ft_strcmp_equal_random_string) {
-    std::random_device rd;
-    std::mt19937 rng(rd());
+    std::mt19937 rng{getSeed()};
 
     TestResult res{};
     res.n_tested = TestSize::M;
@@ -65,8 +64,7 @@ TEST(ft_strcmp_equal_random_string) {
 }
 
 TEST(ft_strcmp_different_random_string) {
-    std::random_device rd;
-    std::mt19937 rng(rd());
+    std::mt19937 rng{getSeed()};
 
     TestResult res{};
     res.n_tested = TestSize::L;

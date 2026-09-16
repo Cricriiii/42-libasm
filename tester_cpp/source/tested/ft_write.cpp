@@ -52,8 +52,7 @@ TEST(ft_write_exact_write) {
         return TestResult{0, 0};
     }
 
-    std::random_device rd;
-    std::mt19937 rng(rd());
+    std::mt19937 rng{getSeed()};
 
     TestResult res{TestSize::M};
 
