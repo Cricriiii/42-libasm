@@ -20,10 +20,10 @@ global ft_strcmp        ; Make the function callable / visible from outside
 ft_strcmp:
     mov al, byte [rdi]  ; Store *s1 in AL
     cmp al, 0           ; Test if the end of s1 has been reached
-    jz .end            ; If so, exit loop
+    jz .end             ; If so, exit loop
 
     cmp al, byte [rsi]  ; Compare *s1 and *s2
-    jnz .end           ; If different (ZF=0), exit loop
+    jnz .end            ; If different (ZF=0), exit loop
 
                         ; Else
     inc rdi             ; ++s1

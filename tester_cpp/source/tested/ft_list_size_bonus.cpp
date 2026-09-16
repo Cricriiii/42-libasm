@@ -40,3 +40,12 @@ TEST(ft_list_size_random_size) {
     }
     return res;
 }
+
+TEST(ft_list_size_register_integrity) {
+    t_list *list = nullptr;
+    int value = 3;
+    ft_list_push_front(&list, &value);
+    TestResult res = testRegisterIntegrity(ft_list_size, list);
+    free(list);
+    return res;
+}

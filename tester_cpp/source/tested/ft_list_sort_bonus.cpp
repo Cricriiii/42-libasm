@@ -115,8 +115,9 @@ TEST(ft_list_sort_random_sequence) {
             t_list *tmp = prev;
             prev = cur;
             cur = cur->next;
-            if (tmp)
+            if (tmp) {
                 free(tmp);
+            }
         }
     }
 
@@ -127,5 +128,22 @@ TEST(ft_list_sort_random_sequence) {
     int64_t average = total / measures.size();
     (void)average;
 
+    return res;
+}
+
+TEST(ft_list_sort_register_integrity) {
+    t_list *list = nullptr;
+    int value1 = 1;
+    int value2 = 2;
+    int value3 = 3;
+    ft_list_push_front(&list, &value1);
+    ft_list_push_front(&list, &value2);
+    ft_list_push_front(&list, &value3);
+    TestResult res =
+        testRegisterIntegrity(ft_list_sort, &list, [](void *a, void *b) {
+            int lhs = *static_cast<int *>(a);
+            int rhs = *static_cast<int *>(b);
+            return static_cast<int>(lhs > rhs);
+        });
     return res;
 }

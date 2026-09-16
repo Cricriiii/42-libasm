@@ -164,3 +164,8 @@ TEST(ft_atoi_base_wrong_base) {
     }
     return res;
 }
+
+TEST(ft_atoi_base_register_integrity) {
+    return testRegisterIntegrity(ft_atoi_base, const_cast<char *>("123456789"),
+                                 const_cast<char *>("123"));
+}

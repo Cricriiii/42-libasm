@@ -27,7 +27,7 @@ __attribute__((constructor)) static void print_banner() {
 __attribute__((destructor)) static void finalize_output() {
     std::cout
         << "\n\e[0;37m"
-        << "****************************************************************"
+        << "***************************************************************"
         << "\nResult=" << (error_report.n_tested - error_report.n_failures)
         << "/" << error_report.n_tested << "\n"
         << "****************************************************************\n";

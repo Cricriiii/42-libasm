@@ -17,14 +17,13 @@ TEST(ft_list_push_front_random_sequence) {
             values.push_back(randomIntegerValue<int>());
         }
 
-        for (std::vector<int>::const_reverse_iterator cri = values.crbegin();
-             cri != values.crend(); ++cri) {
+        for (auto cri = values.crbegin(); cri != values.crend(); ++cri) {
             ft_list_push_front(
                 &list, const_cast<void *>(
                            static_cast<const void *>(std::addressof(*cri))));
         }
 
-        std::vector<int>::const_iterator ci = values.begin();
+        auto ci = values.begin();
         for (t_list *ptr = list; ptr != nullptr; ptr = ptr->next) {
             if (*static_cast<int *>(ptr->data) != *ci) {
                 ++res.n_failures;
@@ -43,5 +42,13 @@ TEST(ft_list_push_front_random_sequence) {
             ptr = next;
         }
     }
+    return res;
+}
+
+TEST(ft_list_push_front_register_integrity) {
+    t_list *list = nullptr;
+    int value = 3;
+    TestResult res = testRegisterIntegrity(ft_list_push_front, &list, &value);
+    free(list);
     return res;
 }
