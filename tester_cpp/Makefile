@@ -11,27 +11,31 @@ CXXFLAGS	:= -std=c++23 -Wall -Wextra -Werror -g3 -O0
 # ---------------------------------------------------------------------------- #
 
 # Librairies
-LIBCPP			:= libcpp
+LIBCPP		:= libcpp
 LIBCPP_INC	:= ../$(LIBCPP)/include
-LIBCPP_A		:= ../$(LIBCPP)/$(LIBCPP).a
+LIBCPP_A	:= ../$(LIBCPP)/$(LIBCPP).a
 
-LIBASM			:= libasm
-LIBASM_A		:= ../$(LIBASM)/$(LIBASM).a
+LIBASM		:= libasm
+LIBASM_A	:= ../$(LIBASM)/$(LIBASM).a
 
-LIBS				:= $(LIBCPP_A) $(LIBASM_A) 
+LIBS		:= $(LIBCPP_A) $(LIBASM_A) 
 
 # Files
+RUNNER_NAME	:= $(LIBASM)_tester
 
-RUNNER_NAME			:= $(LIBASM)_tester
-
-INC_DIR					:= include
-INC_TESTED			:= $(INC_DIR)/tested
-SRC_DIR					:= source
-OBJ_DIR					:= .object
+INC_DIR			:= include
+INC_TESTED		:= $(INC_DIR)/tested
+SRC_DIR			:= source
+OBJ_DIR			:= .object
 OBJ_TESTED_DIR	:= $(OBJ_DIR)/tested
 
 FILES			:= $(shell find $(SRC_DIR) -type f -name '*.cpp')
-OBJECTS		:= $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(FILES))
+FILES_MANDATORY	:= $(filter-out %_bonus.cpp,$(FILES))
+FILES_BONUS		:= $(filter %_bonus.cpp,$(FILES))
+
+OBJS_MANDATORY	:= $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(FILES_MANDATORY))
+OBJS_BONUS		:= $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(FILES_BONUS))
+OBJS			:= $(OBJS_MANDATORY) $(OBJS_BONUS)
 
 
 # ---------------------------------------------------------------------------- #
@@ -41,7 +45,11 @@ OBJECTS		:= $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(FILES))
 ## Build the tester
 all: $(RUNNER_NAME)
 
-$(RUNNER_NAME): $(OBJECTS) $(LIBS)
+$(RUNNER_NAME): $(OBJS_MANDATORY) $(LIBS)
+	$(CXX) $(CXXFLAGS) -I $(INC_DIR) -I $(LIBCPP_INC) -I $(INC_TESTED) $^ -o $@
+
+## Build the tester with bonus tests
+bonus: $(OBJS) $(LIBS)
 	$(CXX) $(CXXFLAGS) -I $(INC_DIR) -I $(LIBCPP_INC) -I $(INC_TESTED) $^ -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
@@ -88,6 +96,6 @@ help:
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 	@echo
 
-.PHONY: all re test clean c fclean fc
+.PHONY: all bonus re test clean c fclean fc
 
 .SECONDARY: $(RUNNER_OBJ) $(TEST_OBJ)

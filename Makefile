@@ -6,7 +6,7 @@
 #    By: fox <fox@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/13 17:50:35 by fox               #+#    #+#              #
-#    Updated: 2026/09/16 18:34:39 by fox              ###   ########.fr        #
+#    Updated: 2026/09/16 23:46:40 by fox              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,10 +15,10 @@
 # files                                                                        #
 # ---------------------------------------------------------------------------- #
 
-LIBASM_DIR			:= libasm
-LIBCPP_DIR			:= libcpp
+LIBASM_DIR		:= libasm
+LIBCPP_DIR		:= libcpp
 TESTER_CPP_DIR	:= tester_cpp
-TESTER_RUNNER		:= $(TESTER_CPP_DIR)/libasm_tester
+TESTER_RUNNER	:= $(TESTER_CPP_DIR)/libasm_tester
 
 
 # ---------------------------------------------------------------------------- #
@@ -28,16 +28,15 @@ TESTER_RUNNER		:= $(TESTER_CPP_DIR)/libasm_tester
 ## Build libasm 'mandatory' archive and tester
 all:
 	+$(MAKE) -C $(LIBASM_DIR) all
-	+$(MAKE) then
+	+$(MAKE) -C $(LIBCPP_DIR) all
+	+$(MAKE) -C $(TESTER_CPP_DIR) all
 
 ## Build libasm 'bonus' archive and tester
 bonus:
 	+$(MAKE) -C $(LIBASM_DIR) bonus
-	+$(MAKE) then
-
-then:
 	+$(MAKE) -C $(LIBCPP_DIR) all
-	+$(MAKE) -C $(TESTER_CPP_DIR) all
+	+$(MAKE) -C $(TESTER_CPP_DIR) bonus
+
 
 ## Clear every directory and rebuild everything
 re:
@@ -95,4 +94,4 @@ help:
 	@echo
 
 
-.PHONY: all bonus then re test clean fclean format help
+.PHONY: all bonus re test clean fclean format help

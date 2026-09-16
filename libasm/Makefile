@@ -6,7 +6,7 @@
 #    By: fox <fox@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/13 16:42:36 by fox               #+#    #+#              #
-#    Updated: 2026/09/13 17:50:53 by fox              ###   ########.fr        #
+#    Updated: 2026/09/16 23:39:19 by fox              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@
 # ---------------------------------------------------------------------------- #
 
 ASM_CMP			:= nasm
-C_CMP				:= cc
+C_CMP			:= cc
 CFLAGS			:= -std=c23 -g3
 
 
@@ -24,20 +24,22 @@ CFLAGS			:= -std=c23 -g3
 # files                                                                        #
 # ---------------------------------------------------------------------------- #
 
-NAME				:= libasm
+# Librairies
+NAME			:= libasm
 SRC_DIR			:= source
 COM_DIR			:= common
 OBJ_DIR			:= .object
 OBJ_COM_DIR	:= $(OBJ_DIR)/common
 ARCHIVE_A		:= $(NAME).a
 
-FILES						:= $(shell find $(SRC_DIR) -type f -name '*.asm')
+# Files
+FILES			:= $(shell find $(SRC_DIR) -type f -name '*.asm')
 FILES_MANDATORY	:= $(filter-out %_bonus.asm,$(FILES))
-FILES_BONUS			:= $(filter %_bonus.asm,$(FILES))
+FILES_BONUS		:= $(filter %_bonus.asm,$(FILES))
 
 OBJS_MANDATORY	:= $(patsubst $(SRC_DIR)/%.asm,$(OBJ_DIR)/%.o,$(FILES_MANDATORY))
-OBJS_BONUS			:= $(patsubst $(SRC_DIR)/%.asm,$(OBJ_DIR)/%.o,$(FILES_BONUS))
-OBJS						:= $(OBJS_MANDATORY) $(OBJS_BONUS)
+OBJS_BONUS		:= $(patsubst $(SRC_DIR)/%.asm,$(OBJ_DIR)/%.o,$(FILES_BONUS))
+OBJS			:= $(OBJS_MANDATORY) $(OBJS_BONUS)
 
 
 # ---------------------------------------------------------------------------- #
@@ -50,6 +52,7 @@ all: $(ARCHIVE_A)
 $(ARCHIVE_A): $(OBJS_MANDATORY)
 	ar rcs $@ $^
 
+## Build libasm.a with bonus functions
 bonus: $(OBJS)
 	ar rcs $(ARCHIVE_A) $^
 
