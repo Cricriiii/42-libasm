@@ -1,13 +1,13 @@
 #pragma once
 
+#include <fcntl.h>
+#include <unistd.h>
+
 #include <functional>
 #include <limits>
 #include <string>
 #include <utility>
 #include <vector>
-
-#include <unistd.h>
-#include <fcntl.h>
 
 #include "ASMRegisters.hpp"
 
@@ -30,9 +30,10 @@ public:
 
     TestResult() : n_tested{0}, n_failures{0} {
     }
-    TestResult(size_t n) : n_tested{n}, n_failures{0} {
+    TestResult(size_t tested) : n_tested{tested}, n_failures{0} {
     }
-    TestResult(size_t n, size_t m) : n_tested{n}, n_failures{m} {
+    TestResult(size_t tested, size_t failed)
+        : n_tested{tested}, n_failures{failed} {
     }
 };
 

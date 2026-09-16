@@ -6,7 +6,7 @@
 #    By: fox <fox@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/13 17:50:35 by fox               #+#    #+#              #
-#    Updated: 2026/09/16 12:40:57 by fox              ###   ########.fr        #
+#    Updated: 2026/09/16 18:34:39 by fox              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -77,7 +77,7 @@ fclean:
 
 ## Format files
 format:
-	find . -name "*.cpp" -o -name "*.hpp" | xargs clang-format -i
+	@find . -name "*.cpp" -o -name "*.hpp" | xargs clang-format -i
 
 # Provided by https://gitlab.com/depressiveRobot/make-help/blob/master/help.mk
 ## Show this help

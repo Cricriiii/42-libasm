@@ -1,6 +1,5 @@
-#include "tester_cpp.hpp"
 #include "libasm_decl.hpp"
-
+#include "tester_cpp.hpp"
 
 /**
  * Test routines
@@ -74,7 +73,8 @@ TEST(ft_write_exact_write) {
 
 TEST(ft_write_register_integrity) {
     int fd_out = open("/dev/null", O_WRONLY);
-    if (fd_out < 0) return TestResult{};
+    if (fd_out < 0)
+        return TestResult{};
     TestResult res = testRegisterIntegrity(ft_write, fd_out, "hello world", 12);
     close(fd_out);
     return res;

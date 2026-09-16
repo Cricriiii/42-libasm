@@ -1,35 +1,40 @@
 #include <iostream>
+
 #include "TestRegistry.hpp"
 
 TestResult error_report{};
 
-__attribute__((constructor)) static void print_banner(){
-    std::cout \
-    << "\n\e[0;37m"                                                              \
-    << "*****************************************************************    \n" \
-    << " _      _ _                           _            _                \n"  \
-    << "| |    (_) |                         | |          | |               \n"  \
-    << "| |     _| |__   __ _ ___ _ __ ___   | |_ ___  ___| |_ ___ _ __     \n"  \
-    << "| |    | | '_ \\ / _` / __| '_ ` _ \\  | __/ _ \\/ __| __/ _ \\ '__|\n"  \
-    << "| |____| | |_) | (_| \\__ \\ | | | | | | ||  __/\\__ \\ ||  __/ |   \n"  \
-    << "|______|_|_.__/ \\__,_|___/_| |_| |_|  \\__\\___||___/\\__\\___|_|  \n"  \
-    << "****************************************************************     \n";
+__attribute__((constructor)) static void print_banner() {
+    std::cout << "\n\e[0;37m"
+              << "*************************************************************"
+                 "****    \n"
+              << " _      _ _                           _            _         "
+                 "       \n"
+              << "| |    (_) |                         | |          | |        "
+                 "       \n"
+              << "| |     _| |__   __ _ ___ _ __ ___   | |_ ___  ___| |_ ___ _ "
+                 "__     \n"
+              << "| |    | | '_ \\ / _` / __| '_ ` _ \\  | __/ _ \\/ __| __/ _ "
+                 "\\ '__|\n"
+              << "| |____| | |_) | (_| \\__ \\ | | | | | | ||  __/\\__ \\ ||  "
+                 "__/ |   \n"
+              << "|______|_|_.__/ \\__,_|___/_| |_| |_|  "
+                 "\\__\\___||___/\\__\\___|_|  \n"
+              << "*************************************************************"
+                 "***     \n";
 }
 
 __attribute__((destructor)) static void finalize_output() {
-    std::cout \
-    << "\n\e[0;37m"                                                         \
-    << "****************************************************************"   \
-    << "\nResult="                                                          \
-    << (error_report.n_tested - error_report.n_failures)                    \
-    << "/"                                                                  \
-    << error_report.n_tested << "\n"                                        \
-    << "****************************************************************\n";
+    std::cout
+        << "\n\e[0;37m"
+        << "****************************************************************"
+        << "\nResult=" << (error_report.n_tested - error_report.n_failures)
+        << "/" << error_report.n_tested << "\n"
+        << "****************************************************************\n";
 }
 
 int main(void) {
     const char* outcome[] = {"\e[0;31m[FAIL] ", "\e[0;37m[SUCCESS] "};
-
 
     for (auto& t : TestRegistry::getInstance().tests) {
         std::cout << "\e[0;30m[RUN] " << t.name << "... \n";
@@ -38,7 +43,8 @@ int main(void) {
             error_report.n_tested += result.n_tested;
             error_report.n_failures += result.n_failures;
 
-            std::cout << outcome[result.n_tested && result.n_failures == 0] << t.name << "   ("
+            std::cout << outcome[result.n_tested && result.n_failures == 0]
+                      << t.name << "   ("
                       << (result.n_tested - result.n_failures) << "/"
                       << result.n_tested << ")\n";
 

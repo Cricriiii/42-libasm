@@ -18,4 +18,3 @@ std::string generateRandomString(std::mt19937& rng, size_t max_len) {
 
     return s;
 }
-

@@ -1,12 +1,10 @@
-#include "tester_cpp.hpp"
 #include "libasm_decl.hpp"
+#include "tester_cpp.hpp"
 
 /**
  * These headers are used by this test routine.
  */
 #include <cstring>
-
-
 
 /**
  * Test routines
