@@ -53,22 +53,25 @@ TEST(ft_read_null_string) {
     return res;
 }
 
-TEST(ft_read_proper_use) {
+TEST(ft_read_smaller_read) {
+    /* Generate the random engine */
     std::random_device rd;
     std::mt19937 rng(rd());
-    std::uniform_int_distribution<size_t> distribution(1, TestSize::XL);
-    size_t file_len = distribution(rng);
+    
+    /* Generate the random sample file */
+    std::uniform_int_distribution<size_t> distribution(1, TestSize::XXXL);
+    std::string outfile = "/tmp/libasm-read-out.txt";
+    size_t file_len = distribution(rng) * 1000;
 
-    const char *outfile{"/tmp/libasm-read-out.txt"};
-    std::string cmd = "head -c " + std::to_string(file_len) + " /dev/urandom > " + outfile;
-    system(cmd.c_str());
+    std::string cmd = "dd if=/dev/urandom of=" + outfile + " bs=" + std::to_string(file_len) + " count=1 2> /dev/null";
+    std::system(cmd.c_str());
 
-    int fd_in_1 = open(outfile, O_RDONLY);
+    int fd_in_1 = open(outfile.c_str(), O_RDONLY);
     if (fd_in_1 < 0) {
         return TestResult{};
     }
 
-    int fd_in_2 = open(outfile, O_RDONLY);
+    int fd_in_2 = open(outfile.c_str(), O_RDONLY);
     if (fd_in_2 < 0) {
         close(fd_in_1);
         return TestResult{};
@@ -82,25 +85,79 @@ TEST(ft_read_proper_use) {
 
         size_t len{distribution_file_len(rng)};
 
-        char buf_1[file_len + 1];
+        std::vector<char> buf_1(len);
         set_errno(0);
-        ssize_t ret_1 = ft_read(fd_in_1, buf_1, len);
+        ssize_t ret_1 = ft_read(fd_in_1, buf_1.data(), len);
         int errno_1 = errno;
 
-        char buf_2[file_len + 1];
+        std::vector<char> buf_2(len);
         set_errno(0);
-        ssize_t ret_2 = read(fd_in_2, buf_2, len);
+        ssize_t ret_2 = read(fd_in_2, buf_2.data(), len);
         int errno_2 = errno;        
 
-        res.n_failures += (errno_1 != errno_2) || (ret_1 != ret_2) || std::memcmp(buf_1, buf_2, ret_1);
+        res.n_failures += (errno_1 != errno_2) || (ret_1 != ret_2) || buf_1 != buf_2;
     }
 
     close(fd_in_1);
     close(fd_in_2);
-    unlink(outfile);
+    unlink(outfile.c_str());
     return res;
 }
 
-TEST(ft_write_excess_read) {
-    return TestResult{};
+TEST(ft_read_exact_read) {
+    /* Generate the random engine */
+    std::random_device rd;
+    std::mt19937 rng(rd());
+    
+    /* Generate the random sample file */
+    std::uniform_int_distribution<size_t> distribution(1, TestSize::XXXL);
+    std::string outfile = "/tmp/libasm-read-out.txt";
+    size_t file_len = distribution(rng) * 1000;
+
+    std::string cmd = "dd if=/dev/urandom of=" + outfile + " bs=" + std::to_string(file_len) + " count=1 2> /dev/null";
+    std::system(cmd.c_str());
+
+    int fd_in_1 = open(outfile.c_str(), O_RDONLY);
+    if (fd_in_1 < 0) {
+        return TestResult{};
+    }
+
+    int fd_in_2 = open(outfile.c_str(), O_RDONLY);
+    if (fd_in_2 < 0) {
+        close(fd_in_1);
+        return TestResult{};
+    }    
+
+    TestResult res{1};
+
+    std::vector<char> buf_1(file_len);
+    set_errno(0);
+    ssize_t ret_1 = ft_read(fd_in_1, buf_1.data(), file_len);
+    int errno_1 = errno;
+
+    std::vector<char> buf_2(file_len);
+    set_errno(0);
+    ssize_t ret_2 = read(fd_in_2, buf_2.data(), file_len);
+    int errno_2 = errno;        
+
+    res.n_failures += (errno_1 != errno_2) || (ret_1 != ret_2) || buf_1 != buf_2;
+
+    close(fd_in_1);
+    close(fd_in_2);
+    unlink(outfile.c_str());
+    return res;
+}
+
+TEST(ft_read_register_integrity) {
+    size_t file_len = TestSize::M;
+    std::string outfile = "/tmp/libasm-read-out.txt";
+    std::string cmd = "dd if=/dev/urandom of=" + outfile + " bs=" + std::to_string(file_len) + " count=1 2> /dev/null";
+    std::system(cmd.c_str());
+
+    int fd_in = open(outfile.c_str(), O_RDONLY);
+    std::vector<char> buf(file_len);
+    if (fd_in < 0) return TestResult{};
+    TestResult res = testRegisterIntegrity(ft_read, fd_in, buf.data(), file_len);
+    close(fd_in);
+    return res;
 }
