@@ -28,6 +28,7 @@ INC_TESTED		:= $(INC_DIR)/tested
 SRC_DIR			:= source
 OBJ_DIR			:= .object
 OBJ_TESTED_DIR	:= $(OBJ_DIR)/tested
+BONUS_STAMP		:= $(OBJ_DIR)/.bonus
 
 FILES			:= $(shell find $(SRC_DIR) -type f -name '*.cpp')
 FILES_MANDATORY	:= $(filter-out %_bonus.cpp,$(FILES))
@@ -49,8 +50,11 @@ $(RUNNER_NAME): $(OBJS_MANDATORY) $(LIBS)
 	$(CXX) $(CXXFLAGS) -I $(INC_DIR) -I $(LIBCPP_INC) -I $(INC_TESTED) $^ -o $@
 
 ## Build the tester with bonus tests
-bonus: $(OBJS) $(LIBS)
-	$(CXX) $(CXXFLAGS) -I $(INC_DIR) -I $(LIBCPP_INC) -I $(INC_TESTED) $^ -o $@
+bonus: $(BONUS_STAMP)
+
+$(BONUS_STAMP): $(OBJS) $(LIBS) $(RUNNER_NAME)
+	$(CXX) $(CXXFLAGS) -I $(INC_DIR) -I $(LIBCPP_INC) -I $(INC_TESTED) $(OBJS) $(LIBS) -o $(RUNNER_NAME)
+	@touch $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(OBJ_DIR)

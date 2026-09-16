@@ -6,7 +6,7 @@
 #    By: fox <fox@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/13 16:13:57 by fox               #+#    #+#              #
-#    Updated: 2026/09/13 18:40:07 by fox              ###   ########.fr        #
+#    Updated: 2026/09/16 23:58:33 by fox              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@
 # compile                                                                      #
 # ---------------------------------------------------------------------------- #
 
-CXX				:= g++
+CXX			:= g++
 CXXFLAGS	:= -std=c++23 -Wall -Werror -Wextra -g3
 
 
@@ -23,14 +23,14 @@ CXXFLAGS	:= -std=c++23 -Wall -Werror -Wextra -g3
 # files                                                                        #
 # ---------------------------------------------------------------------------- #
 
-NAME			:= libcpp
+NAME		:= libcpp
 INC_DIR		:= include
 SRC_DIR		:= source
 OBJ_DIR		:= .object
 ARCHIVE_A	:= $(NAME).a
 
-FILES			:= $(shell find $(SRC_DIR) -type f -name "*.cpp")
-OBJS			:= $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(FILES))
+FILES		:= $(shell find $(SRC_DIR) -type f -name "*.cpp")
+OBJS		:= $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(FILES))
 
 
 # ---------------------------------------------------------------------------- #

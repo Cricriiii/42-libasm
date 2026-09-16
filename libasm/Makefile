@@ -6,7 +6,7 @@
 #    By: fox <fox@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/13 16:42:36 by fox               #+#    #+#              #
-#    Updated: 2026/09/16 23:39:19 by fox              ###   ########.fr        #
+#    Updated: 2026/09/16 23:57:16 by fox              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,8 +29,9 @@ NAME			:= libasm
 SRC_DIR			:= source
 COM_DIR			:= common
 OBJ_DIR			:= .object
-OBJ_COM_DIR	:= $(OBJ_DIR)/common
+OBJ_COM_DIR		:= $(OBJ_DIR)/common
 ARCHIVE_A		:= $(NAME).a
+BONUS_STAMP		:= $(OBJ_DIR)/.bonus
 
 # Files
 FILES			:= $(shell find $(SRC_DIR) -type f -name '*.asm')
@@ -53,8 +54,11 @@ $(ARCHIVE_A): $(OBJS_MANDATORY)
 	ar rcs $@ $^
 
 ## Build libasm.a with bonus functions
-bonus: $(OBJS)
-	ar rcs $(ARCHIVE_A) $^
+bonus: $(BONUS_STAMP)
+
+$(BONUS_STAMP): $(OBJS) $(ARCHIVE_A)
+	ar rcs $(ARCHIVE_A) $(OBJS)
+	touch $@
 
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.asm
