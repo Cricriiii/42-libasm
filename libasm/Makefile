@@ -6,7 +6,7 @@
 #    By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/13 16:42:36 by fox               #+#    #+#              #
-#    Updated: 2026/09/17 12:39:26 by cgajean          ###   ########.fr        #
+#    Updated: 2026/09/17 13:23:57 by cgajean          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,12 +34,12 @@ ARCHIVE_A		:= $(NAME).a
 BONUS_STAMP		:= $(OBJ_DIR)/.bonus
 
 # Files
-FILES			:= $(shell find $(SRC_DIR) -type f -name '*.asm')
-FILES_MANDATORY	:= $(filter-out %_bonus.asm,$(FILES))
-FILES_BONUS		:= $(filter %_bonus.asm,$(FILES))
+FILES			:= $(shell find $(SRC_DIR) -type f -name '*.s')
+FILES_MANDATORY	:= $(filter-out %_bonus.s,$(FILES))
+FILES_BONUS		:= $(filter %_bonus.s,$(FILES))
 
-OBJS_MANDATORY	:= $(patsubst $(SRC_DIR)/%.asm,$(OBJ_DIR)/%.o,$(FILES_MANDATORY))
-OBJS_BONUS		:= $(patsubst $(SRC_DIR)/%.asm,$(OBJ_DIR)/%.o,$(FILES_BONUS))
+OBJS_MANDATORY	:= $(patsubst $(SRC_DIR)/%.s,$(OBJ_DIR)/%.o,$(FILES_MANDATORY))
+OBJS_BONUS		:= $(patsubst $(SRC_DIR)/%.s,$(OBJ_DIR)/%.o,$(FILES_BONUS))
 OBJS			:= $(OBJS_MANDATORY) $(OBJS_BONUS)
 
 
@@ -61,7 +61,7 @@ $(BONUS_STAMP): $(OBJS) $(ARCHIVE_A)
 	touch $@
 
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.asm
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.s
 	@mkdir -p $(OBJ_DIR)
 	@mkdir -p $(OBJ_COM_DIR)
 	$(ASM_CMP) -f elf64 -g3 -F dwarf $< -o $@
