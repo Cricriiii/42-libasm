@@ -1,16 +1,34 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_list_sort_bonus.cpp                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/17 12:38:34 by cgajean           #+#    #+#             */
+/*   Updated: 2026/09/17 12:38:35 by cgajean          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <chrono>
 
 #include "libasm_decl.hpp"
 #include "tester_cpp.hpp"
 
+/**
+ * Verify sorting behavior for an empty list.
+ */
 TEST(ft_list_sort_empty_list) {
-    t_list *list = nullptr;
+    t_list* list = nullptr;
 
     ft_list_sort(&list, nullptr);
 
     return TestResult{1, 0};
 }
 
+/**
+ * Verify sorting of sequences that are initially ordered.
+ */
 TEST(ft_list_sort_ordered_sequence) {
     std::mt19937 rng{getSeed()};
 
@@ -20,7 +38,7 @@ TEST(ft_list_sort_ordered_sequence) {
     std::vector<int64_t> measures{};
 
     for (size_t i = 0; i < res.n_tested; ++i) {
-        t_list *list = nullptr;
+        t_list* list = nullptr;
         size_t len{list_size_distrib(rng)};
 
         std::vector<int> values{};
@@ -30,13 +48,13 @@ TEST(ft_list_sort_ordered_sequence) {
 
         for (auto ci = values.cbegin(); ci != values.cend(); ++ci) {
             ft_list_push_front(
-                &list, const_cast<void *>(
-                           static_cast<const void *>(std::addressof(*ci))));
+                &list, const_cast<void*>(
+                           static_cast<const void*>(std::addressof(*ci))));
         }
 
-        auto cmp = [](void *a, void *b) {
-            int lhs = *static_cast<int *>(a);
-            int rhs = *static_cast<int *>(b);
+        auto cmp = [](void* a, void* b) {
+            int lhs = *static_cast<int*>(a);
+            int rhs = *static_cast<int*>(b);
             return static_cast<int>(lhs > rhs);
         };
 
@@ -52,7 +70,7 @@ TEST(ft_list_sort_ordered_sequence) {
                 if (!res.n_failures)
                     ++res.n_failures;
             }
-            t_list *tmp = prev;
+            t_list* tmp = prev;
             prev = cur;
             cur = cur->next;
             if (tmp)
@@ -70,6 +88,9 @@ TEST(ft_list_sort_ordered_sequence) {
     return res;
 }
 
+/**
+ * Verify sorting of randomly generated sequences.
+ */
 TEST(ft_list_sort_random_sequence) {
     std::mt19937 rng{getSeed()};
 
@@ -80,7 +101,7 @@ TEST(ft_list_sort_random_sequence) {
     std::vector<int64_t> measures{};
 
     for (size_t i = 0; i < res.n_tested; ++i) {
-        t_list *list = nullptr;
+        t_list* list = nullptr;
         size_t len{list_size_distrib(rng)};
 
         std::vector<int> values{};
@@ -90,13 +111,13 @@ TEST(ft_list_sort_random_sequence) {
 
         for (auto cri = values.crbegin(); cri != values.crend(); ++cri) {
             ft_list_push_front(
-                &list, const_cast<void *>(
-                           static_cast<const void *>(std::addressof(*cri))));
+                &list, const_cast<void*>(
+                           static_cast<const void*>(std::addressof(*cri))));
         }
 
-        auto cmp = [](void *a, void *b) {
-            int lhs = *static_cast<int *>(a);
-            int rhs = *static_cast<int *>(b);
+        auto cmp = [](void* a, void* b) {
+            int lhs = *static_cast<int*>(a);
+            int rhs = *static_cast<int*>(b);
             return static_cast<int>(lhs > rhs);
         };
 
@@ -112,7 +133,7 @@ TEST(ft_list_sort_random_sequence) {
                 if (!res.n_failures)
                     ++res.n_failures;
             }
-            t_list *tmp = prev;
+            t_list* tmp = prev;
             prev = cur;
             cur = cur->next;
             if (tmp) {
@@ -131,8 +152,11 @@ TEST(ft_list_sort_random_sequence) {
     return res;
 }
 
+/**
+ * Verify that ft_list_sort preserves callee-saved registers.
+ */
 TEST(ft_list_sort_register_integrity) {
-    t_list *list = nullptr;
+    t_list* list = nullptr;
     int value1 = 1;
     int value2 = 2;
     int value3 = 3;
@@ -140,9 +164,9 @@ TEST(ft_list_sort_register_integrity) {
     ft_list_push_front(&list, &value2);
     ft_list_push_front(&list, &value3);
     TestResult res =
-        testRegisterIntegrity(ft_list_sort, &list, [](void *a, void *b) {
-            int lhs = *static_cast<int *>(a);
-            int rhs = *static_cast<int *>(b);
+        testRegisterIntegrity(ft_list_sort, &list, [](void* a, void* b) {
+            int lhs = *static_cast<int*>(a);
+            int rhs = *static_cast<int*>(b);
             return static_cast<int>(lhs > rhs);
         });
     return res;

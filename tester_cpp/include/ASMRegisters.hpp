@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ASMRegisters.hpp                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/17 12:38:52 by cgajean           #+#    #+#             */
+/*   Updated: 2026/09/17 12:38:53 by cgajean          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #pragma once
 
 struct CallerSavedState {
@@ -15,6 +27,9 @@ struct CallerSavedState {
 };
 
 inline CallerSavedState captureCallerSavedRegisters() {
+    /**
+     * Capture the current values of caller-saved registers.
+     */
     CallerSavedState state{};
 
     asm volatile(
@@ -47,6 +62,9 @@ struct CalleeSavedState {
 };
 
 inline CalleeSavedState captureCalleeSavedRegisters() {
+    /**
+     * Capture the current values of callee-saved registers.
+     */
     CalleeSavedState state{};
 
     asm volatile(

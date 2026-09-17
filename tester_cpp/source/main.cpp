@@ -1,13 +1,29 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/17 12:50:42 by cgajean           #+#    #+#             */
+/*   Updated: 2026/09/17 13:11:44 by cgajean          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <iostream>
 
 #include "TestRegistry.hpp"
 
 TestResult error_report{};
 
+/**
+ * Print the tester banner before any test runs.
+ */
 __attribute__((constructor)) static void print_banner() {
+    std::system("clear");
     std::cout << "\n\e[0;37m"
               << "*************************************************************"
-                 "****    \n"
+                 "***    \n"
               << " _      _ _                           _            _         "
                  "       \n"
               << "| |    (_) |                         | |          | |        "
@@ -24,15 +40,22 @@ __attribute__((constructor)) static void print_banner() {
                  "***     \n";
 }
 
+/**
+ * Print the aggregate test result after all tests have completed.
+ */
 __attribute__((destructor)) static void finalize_output() {
     std::cout
         << "\n\e[0;37m"
         << "***************************************************************"
-        << "\nResult=" << (error_report.n_tested - error_report.n_failures)
-        << "/" << error_report.n_tested << "\n"
-        << "****************************************************************\n";
+        << "\nTotal succeeded <"
+        << (error_report.n_tested - error_report.n_failures) << "/"
+        << error_report.n_tested << ">\n"
+        << "***************************************************************\n";
 }
 
+/**
+ * Run every registered test and report its result.
+ */
 int main(void) {
     const char* outcome[] = {"\e[0;31m[FAIL] ", "\e[0;37m[SUCCESS] "};
 
@@ -49,11 +72,11 @@ int main(void) {
                       << result.n_tested << ")\n";
 
         } catch (const std::exception& e) {
-            std::cerr << "[ERROR] " << e.what() << "\n";
+            std::cerr << "\e[0;31m[ERROR] " << e.what() << "\n";
             ++error_report.n_failures;
 
         } catch (...) {
-            std::cerr << "[ERROR] Unknown exception\n";
+            std::cerr << "\e[0;31m[ERROR] Unknown exception\n";
             ++error_report.n_failures;
         }
     }

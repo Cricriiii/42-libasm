@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strcpy.cpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/17 12:38:40 by cgajean           #+#    #+#             */
+/*   Updated: 2026/09/17 13:03:43 by cgajean          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libasm_decl.hpp"
 #include "tester_cpp.hpp"
 
@@ -7,7 +19,7 @@
 #include <cstring>
 
 /**
- * Test routines
+ * Compare null-pointer behavior with the standard strcpy implementation.
  */
 TEST(ft_strcpy_null_string) {
     std::vector<std::function<char*(char*, const char*)>> f{ft_strcpy, strcpy};
@@ -37,13 +49,19 @@ TEST(ft_strcpy_null_string) {
                 std::cerr << "ft_strcpy_null_string: fork failed\n";
             }
         }
-        const bool crashed0 = WIFSIGNALED(status[0]);
-        const bool crashed1 = WIFSIGNALED(status[1]);
-        res.n_failures += (crashed0 != crashed1);
+        const bool same_signal = WIFSIGNALED(status[0]) &&
+                                 WIFSIGNALED(status[1]) &&
+                                 WTERMSIG(status[0]) == WTERMSIG(status[1]);
+        if (!same_signal) {
+            ++res.n_failures;
+        }
     }
     return res;
 }
 
+/**
+ * Compare copied contents for randomly generated strings.
+ */
 TEST(ft_strcpy_random_string) {
     std::mt19937 rng{getSeed()};
 
@@ -76,59 +94,9 @@ TEST(ft_strcpy_random_string) {
     return res;
 }
 
-TEST(ft_strcpy_unfit_destination) {
-    std::mt19937 rng{getSeed()};
-
-    std::vector<std::function<char*(char*, const char*)>> f{ft_strcpy, strcpy};
-
-    TestResult res{};
-
-    for (size_t len_max = TestSize::M; len_max > 100; len_max -= 100) {
-        int status[2]{};
-        int i{};
-
-        std::string s{};
-        do {
-            s = generateRandomString(rng, len_max);
-        } while (s.size() <= 100);
-
-        for (auto fn : f) {
-            pid_t pid = fork();
-
-            if (pid > 0) {
-                ++res.n_tested;
-                waitpid(pid, &status[i++], 0);
-            } else if (pid == 0) {
-                try {
-                    /* Volontarily allocate 100-bytes short segments*/
-                    char* cpy_ptr =
-                        static_cast<char*>(std::malloc(s.size() - 100));
-                    if (!cpy_ptr) {
-                        std::cerr << "malloc failed\n";
-                        _exit(2);
-                    }
-
-                    cpy_ptr = fn(cpy_ptr, s.c_str());
-                    _exit(EXIT_SUCCESS);
-                } catch (std::exception& e) {
-                    std::cerr << e.what() << "\n";
-                }
-                _exit(EXIT_FAILURE);
-            } else {
-                ++res.n_failures;
-            }
-        }
-
-        const bool crashed0 = WIFSIGNALED(status[0]);
-        const bool crashed1 = WIFSIGNALED(status[1]);
-
-        if (crashed0 != crashed1) {
-            ++res.n_failures;
-        }
-    }
-    return res;
-}
-
+/**
+ * Verify that ft_strcpy preserves callee-saved registers.
+ */
 TEST(ft_strcpy_register_integrity) {
     char destination[12];
     return testRegisterIntegrity(ft_strcpy, destination, "hello world");

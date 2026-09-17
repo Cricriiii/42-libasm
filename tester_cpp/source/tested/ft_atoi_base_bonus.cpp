@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_atoi_base_bonus.cpp                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/17 12:38:19 by cgajean           #+#    #+#             */
+/*   Updated: 2026/09/17 12:38:20 by cgajean          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libasm_decl.hpp"
 #include "tester_cpp.hpp"
 
@@ -21,7 +33,10 @@ static const std::vector<char> asciiTable(void) {
 
 const std::vector<char> charSet = asciiTable();
 
-static void whitespaceSequence(std::string &s) {
+/**
+ * Append a randomly sized sequence of whitespace characters to a string.
+ */
+static void whitespaceSequence(std::string& s) {
     std::mt19937 rng{getSeed()};
 
     std::uniform_int_distribution<size_t> wsp_distrib(0,
@@ -35,7 +50,10 @@ static void whitespaceSequence(std::string &s) {
     }
 }
 
-static int signSequence(std::string &s) {
+/**
+ * Append a randomly sized sign sequence and return its resulting sign.
+ */
+static int signSequence(std::string& s) {
     std::mt19937 rng{getSeed()};
 
     std::uniform_int_distribution<size_t> sign_distrib(0, signs.size() - 1);
@@ -54,6 +72,9 @@ static int signSequence(std::string &s) {
     return sign_value;
 }
 
+/**
+ * Verify conversion after leading whitespace.
+ */
 TEST(ft_atoi_base_whitespaces_only) {
     TestResult res{TestSize::M};
 
@@ -66,14 +87,17 @@ TEST(ft_atoi_base_whitespaces_only) {
         whitespaceSequence(sample_string);
         sample_string.push_back('1');
 
-        if (ft_atoi_base(const_cast<char *>(sample_string.c_str()),
-                         const_cast<char *>("01")) != 1) {
+        if (ft_atoi_base(const_cast<char*>(sample_string.c_str()),
+                         const_cast<char*>("01")) != 1) {
             ++res.n_failures;
         }
     }
     return res;
 }
 
+/**
+ * Verify conversion after a sequence of signs.
+ */
 TEST(ft_atoi_base_signs_only) {
     TestResult res{TestSize::M};
 
@@ -85,14 +109,17 @@ TEST(ft_atoi_base_signs_only) {
         auto sign_value = signSequence(sample_string);
         sample_string.push_back('1');
 
-        if (ft_atoi_base(const_cast<char *>(sample_string.c_str()),
-                         const_cast<char *>("01")) != 1 * sign_value) {
+        if (ft_atoi_base(const_cast<char*>(sample_string.c_str()),
+                         const_cast<char*>("01")) != 1 * sign_value) {
             ++res.n_failures;
         }
     }
     return res;
 }
 
+/**
+ * Verify conversion with whitespace, signs, and random integer values.
+ */
 TEST(ft_atoi_base_whitespaces_signs_int_values) {
     TestResult res{TestSize::M};
 
@@ -104,8 +131,8 @@ TEST(ft_atoi_base_whitespaces_signs_int_values) {
         auto value = randomIntegerValue<int>();
         sample_string += std::to_string(value);
 
-        if (ft_atoi_base(const_cast<char *>(sample_string.c_str()),
-                         const_cast<char *>("0123456789")) !=
+        if (ft_atoi_base(const_cast<char*>(sample_string.c_str()),
+                         const_cast<char*>("0123456789")) !=
             value * sign_value) {
             ++res.n_failures;
         }
@@ -114,6 +141,9 @@ TEST(ft_atoi_base_whitespaces_signs_int_values) {
     return res;
 }
 
+/**
+ * Verify that conversion stops at the first invalid character.
+ */
 TEST(ft_atoi_base_whitespaces_signs_int_garbage_values) {
     TestResult res{TestSize::M};
 
@@ -126,8 +156,8 @@ TEST(ft_atoi_base_whitespaces_signs_int_garbage_values) {
         sample_string += std::to_string(value);
         sample_string += "garbage";
 
-        if (ft_atoi_base(const_cast<char *>(sample_string.c_str()),
-                         const_cast<char *>("0123456789")) !=
+        if (ft_atoi_base(const_cast<char*>(sample_string.c_str()),
+                         const_cast<char*>("0123456789")) !=
             value * sign_value) {
             ++res.n_failures;
         }
@@ -136,6 +166,9 @@ TEST(ft_atoi_base_whitespaces_signs_int_garbage_values) {
     return res;
 }
 
+/**
+ * Verify rejection of bases containing forbidden characters.
+ */
 TEST(ft_atoi_base_wrong_base) {
     TestResult res{};
 
@@ -156,8 +189,8 @@ TEST(ft_atoi_base_wrong_base) {
 
             s.insert(i, 1, c);
 
-            if (ft_atoi_base(const_cast<char *>(sample_string.c_str()),
-                             const_cast<char *>(s.c_str())) != 0) {
+            if (ft_atoi_base(const_cast<char*>(sample_string.c_str()),
+                             const_cast<char*>(s.c_str())) != 0) {
                 ++res.n_failures;
             }
         }
@@ -165,7 +198,10 @@ TEST(ft_atoi_base_wrong_base) {
     return res;
 }
 
+/**
+ * Verify that ft_atoi_base preserves callee-saved registers.
+ */
 TEST(ft_atoi_base_register_integrity) {
-    return testRegisterIntegrity(ft_atoi_base, const_cast<char *>("123456789"),
-                                 const_cast<char *>("123"));
+    return testRegisterIntegrity(ft_atoi_base, const_cast<char*>("123456789"),
+                                 const_cast<char*>("123"));
 }

@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_read.cpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/17 12:38:13 by cgajean           #+#    #+#             */
+/*   Updated: 2026/09/17 12:38:37 by cgajean          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libasm_decl.hpp"
 #include "tester_cpp.hpp"
 
 /**
- * Test routines
+ * Compare ft_read and read on a closed file descriptor.
  */
 TEST(ft_read_unopened_fd) {
     int fd = unopened_fd(4);
@@ -22,6 +34,9 @@ TEST(ft_read_unopened_fd) {
     return TestResult{1, (errno_1 != errno_2) || (ret_1 != ret_2)};
 }
 
+/**
+ * Compare ft_read and read with a null buffer and varied byte counts.
+ */
 TEST(ft_read_null_string) {
     int fd_in = open("/dev/random", O_RDONLY);
     if (fd_in < 0) {
@@ -46,6 +61,9 @@ TEST(ft_read_null_string) {
     return res;
 }
 
+/**
+ * Compare partial reads, return values, errno, and buffer contents.
+ */
 TEST(ft_read_smaller_read) {
     /* Generate the random engine */
     std::mt19937 rng{getSeed()};
@@ -98,6 +116,9 @@ TEST(ft_read_smaller_read) {
     return res;
 }
 
+/**
+ * Compare a full-file read, return values, errno, and buffer contents.
+ */
 TEST(ft_read_exact_read) {
     /* Generate the random engine */
     std::mt19937 rng{getSeed()};
@@ -144,6 +165,9 @@ TEST(ft_read_exact_read) {
     return res;
 }
 
+/**
+ * Verify that ft_read preserves callee-saved registers.
+ */
 TEST(ft_read_register_integrity) {
     size_t file_len = TestSize::M;
     std::string outfile = "/tmp/libasm-read-out.txt";

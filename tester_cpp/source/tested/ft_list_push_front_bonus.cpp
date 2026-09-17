@@ -1,6 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_list_push_front_bonus.cpp                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/17 12:38:27 by cgajean           #+#    #+#             */
+/*   Updated: 2026/09/17 12:38:28 by cgajean          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libasm_decl.hpp"
 #include "tester_cpp.hpp"
 
+/**
+ * Verify that ft_list_push_front preserves the order of inserted values.
+ */
 TEST(ft_list_push_front_random_sequence) {
     std::mt19937 rng{getSeed()};
 
@@ -9,7 +24,7 @@ TEST(ft_list_push_front_random_sequence) {
     TestResult res{TestSize::M};
 
     for (size_t i = 0; i < res.n_tested; ++i) {
-        t_list *list = nullptr;
+        t_list* list = nullptr;
         size_t len{list_size_distrib(rng)};
 
         std::vector<int> values{};
@@ -19,13 +34,13 @@ TEST(ft_list_push_front_random_sequence) {
 
         for (auto cri = values.crbegin(); cri != values.crend(); ++cri) {
             ft_list_push_front(
-                &list, const_cast<void *>(
-                           static_cast<const void *>(std::addressof(*cri))));
+                &list, const_cast<void*>(
+                           static_cast<const void*>(std::addressof(*cri))));
         }
 
         auto ci = values.begin();
-        for (t_list *ptr = list; ptr != nullptr; ptr = ptr->next) {
-            if (*static_cast<int *>(ptr->data) != *ci) {
+        for (t_list* ptr = list; ptr != nullptr; ptr = ptr->next) {
+            if (*static_cast<int*>(ptr->data) != *ci) {
                 ++res.n_failures;
                 break;
             }
@@ -36,8 +51,8 @@ TEST(ft_list_push_front_random_sequence) {
             ++res.n_failures;
         }
 
-        for (t_list *ptr = list; ptr != nullptr;) {
-            t_list *next = ptr->next;
+        for (t_list* ptr = list; ptr != nullptr;) {
+            t_list* next = ptr->next;
             std::free(ptr);
             ptr = next;
         }
@@ -45,8 +60,11 @@ TEST(ft_list_push_front_random_sequence) {
     return res;
 }
 
+/**
+ * Verify that ft_list_push_front preserves callee-saved registers.
+ */
 TEST(ft_list_push_front_register_integrity) {
-    t_list *list = nullptr;
+    t_list* list = nullptr;
     int value = 3;
     TestResult res = testRegisterIntegrity(ft_list_push_front, &list, &value);
     free(list);

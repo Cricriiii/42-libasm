@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_strlen.cpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/09/17 12:38:44 by cgajean           #+#    #+#             */
+/*   Updated: 2026/09/17 13:18:12 by cgajean          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libasm_decl.hpp"
 #include "tester_cpp.hpp"
 
@@ -7,43 +19,46 @@
 #include <cstring>
 
 /**
- * Test routines
+ * Compare null-pointer behavior with the standard strlen implementation.
  */
-
 TEST(ft_strlen_null_string) {
     std::vector<std::function<size_t(const char*)>> f{ft_strlen, strlen};
 
     TestResult res{};
     int status[2]{};
+    int pid[2];
     int i{};
 
     for (auto fn : f) {
-        pid_t pid = fork();
+        pid[i] = fork();
 
-        if (pid > 0) {
-            ++res.n_tested;
-            if (waitpid(pid, &status[i++], 0) == -1) {
-                ++res.n_failures;
+        if (pid[i] > 0) {
+            if (waitpid(pid[i], &status[i], 0) == -1) {
+                if (i == 0) {
+                    ++res.n_failures;
+                }
             }
 
-        } else if (pid == 0) {
+        } else if (pid[i] == 0) {
             fn(nullptr);
             std::cerr << "ft_strlen_null_string: function should not accept "
                          "nullptr!\n";
             _exit(EXIT_FAILURE);
         } else {
             std::cerr << "ft_strlen_null_string: fork failed\n";
-            ++res.n_failures;
         }
+
+        ++i;
     }
 
-    const bool crashed0 = WIFSIGNALED(status[0]);
-    const bool crashed1 = WIFSIGNALED(status[1]);
-    res.n_failures += (crashed0 != crashed1);
-
-    return res;
+    const bool same_signal = WIFSIGNALED(status[0]) && WIFSIGNALED(status[1]) &&
+                             WTERMSIG(status[0]) == WTERMSIG(status[1]);
+    return TestResult{1, !same_signal};
 }
 
+/**
+ * Compare lengths returned for randomly generated strings.
+ */
 TEST(ft_strlen_random_string) {
     std::mt19937 rng{getSeed()};
 
@@ -64,6 +79,9 @@ TEST(ft_strlen_random_string) {
     return res;
 }
 
+/**
+ * Verify that ft_strlen preserves callee-saved registers.
+ */
 TEST(ft_strlen_register_integrity) {
     return testRegisterIntegrity(ft_strlen, "hello world");
 }
