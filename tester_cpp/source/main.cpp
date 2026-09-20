@@ -6,7 +6,7 @@
 /*   By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/17 12:50:42 by cgajean           #+#    #+#             */
-/*   Updated: 2026/09/20 20:02:34 by cgajean          ###   ########.fr       */
+/*   Updated: 2026/09/20 20:02:58 by cgajean          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ TestResult error_report{};
  * Print the tester banner before any test runs.
  */
 __attribute__((constructor)) static void print_banner() {
-    std::system("clear");
+   //  std::system("clear");
     std::cout << "\n\e[0;37m"
               << "*************************************************************"
                  "***    \n"

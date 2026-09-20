@@ -1,0 +1,80 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Dockerfile                                         :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2026/09/20 14:25:00 by cgajean           #+#    #+#              #
+#    Updated: 2026/09/20 19:53:56 by cgajean          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+# **************************************************************************** #
+# Compile                                                                      #
+# **************************************************************************** #
+
+FROM fedora:44
+
+RUN dnf update && dnf install -y nasm musl-gcc make tar curl && \
+    rm -rf /var/cache/dnf
+
+RUN curl -LO https://musl.cc/x86_64-linux-musl-cross.tgz && \
+    tar xzf x86_64-linux-musl-cross.tgz -C /opt && \
+    rm x86_64-linux-musl-cross.tgz
+
+ENV PATH="/opt/x86_64-linux-musl-cross/bin:${PATH}"
+
+# Copy the project files
+COPY libasm /libasm
+COPY libcpp /libcpp
+COPY tester_cpp /tester_cpp
+COPY Makefile /
+
+# Compile the project
+RUN make bonus
+
+
+# **************************************************************************** #
+# Execute                                                                      #
+# **************************************************************************** #
+
+FROM alpine:3.24.2 
+
+RUN apk update && apk add --update gcompat libgcc libstdc++ && rm -rf /var/cache/apk/*
+
+COPY --from=0 /tester_cpp/libasm_tester /bin/
+
+ENTRYPOINT [ "/bin/libasm_tester" ]
+
+
+# # **************************************************************************** #
+# # Compile                                                                      #
+# # **************************************************************************** #
+
+# FROM fedora:44
+
+# RUN dnf update && dnf install -y nasm g++ make && \
+#     rm -rf /var/cache/dnf
+
+# # Copy the project files
+# COPY libasm /libasm
+# COPY libcpp /libcpp
+# COPY tester_cpp /tester_cpp
+# COPY Makefile /
+
+# # Compile the project
+# RUN make bonus
+
+
+# # **************************************************************************** #
+# # Execute                                                                      #
+# # **************************************************************************** #
+
+# FROM alpine:3.24.2
+
+# RUN apk update && apk add --update gcompat libgcc libstdc++ && rm -rf /var/cache/apk/*
+
+# COPY --from=0 /tester_cpp/libasm_tester /bin/
+
+# ENTRYPOINT [ "/bin/libasm_tester" ]

@@ -6,7 +6,7 @@
 #    By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/13 16:42:36 by fox               #+#    #+#              #
-#    Updated: 2026/09/17 13:23:57 by cgajean          ###   ########.fr        #
+#    Updated: 2026/09/20 15:29:40 by cgajean          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -64,7 +64,7 @@ $(BONUS_STAMP): $(OBJS) $(ARCHIVE_A)
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.s
 	@mkdir -p $(OBJ_DIR)
 	@mkdir -p $(OBJ_COM_DIR)
-	$(ASM_CMP) -f elf64 -g3 -F dwarf $< -o $@
+	$(ASM_CMP) -f elf64  -F dwarf $< -o $@
 
 ## Call 'fclean' and 'all' targets
 re:
