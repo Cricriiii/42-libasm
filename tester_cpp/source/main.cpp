@@ -6,7 +6,7 @@
 /*   By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/17 12:50:42 by cgajean           #+#    #+#             */
-/*   Updated: 2026/09/17 14:31:01 by cgajean          ###   ########.fr       */
+/*   Updated: 2026/09/20 20:00:38 by cgajean          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,17 +50,18 @@ __attribute__((destructor)) static void finalize_output() {
         << "\nTotal succeeded <"
         << (error_report.n_tested - error_report.n_failures) << "/"
         << error_report.n_tested << ">\n"
-        << "***************************************************************\n";
+        << "***************************************************************"
+           "\n\n";
 }
 
 /**
  * Run every registered test and report its result.
  */
 int main(void) {
-    const char* outcome[] = {"\e[0;31m[FAIL] ", "\e[0;37m[SUCCESS] "};
+    const char* outcome[] = {"\e[0;31m[FAIL] ", "\e[0;32m[SUCCESS] "};
 
     for (auto& t : TestRegistry::getInstance().tests) {
-        std::cout << "\e[0;30m[RUN] " << t.name << "... \n";
+        std::cout << "\e[0;36m[RUN] " << t.name << "... \n";
         try {
             TestResult result = t.fn();
             error_report.n_tested += result.n_tested;
