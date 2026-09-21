@@ -6,7 +6,7 @@
 #    By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/13 17:50:35 by fox               #+#    #+#              #
-#    Updated: 2026/09/17 12:39:13 by cgajean          ###   ########.fr        #
+#    Updated: 2026/09/21 11:59:50 by cgajean          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,6 +37,10 @@ bonus:
 	+$(MAKE) -C $(LIBCPP_DIR) all
 	+$(MAKE) -C $(TESTER_CPP_DIR) bonus
 
+## Build the Docker version with bonuses
+docker:
+	+$(MAKE) fclean
+	docker build -t $(TESTER_CPP_DIR):1.0 .
 
 ## Clear every directory and rebuild everything
 re:
@@ -52,6 +56,10 @@ re:
 test:
 	@./$(TESTER_RUNNER) || true
 
+
+## Launch the Dockerized test executable
+test_docker:
+	docker run -it --rm localhost/$(TESTER_CPP_DIR):1.0
 	
 # ---------------------------------------------------------------------------- #
 # clean                                                                        #
@@ -94,4 +102,4 @@ help:
 	@echo
 
 
-.PHONY: all bonus re test clean fclean format help
+.PHONY: all bonus re docker test test_docker clean fclean format help

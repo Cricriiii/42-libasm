@@ -30,6 +30,13 @@ tester, and a dedicated C++ test suite in `tester_cpp`.
 
 ## Instructions
 
+There are two ways to build and test the project:
+
+- [Local build](#local-build): uses the tools installed on the host system.
+- [Docker build](#docker-build): uses the environment defined by `Dockerfile`.
+
+## Local build
+
 ### Prerequisites
 
 - Linux on an x86-64 system
@@ -38,7 +45,7 @@ tester, and a dedicated C++ test suite in `tester_cpp`.
 - A C++ compiler with C++23 support
 - GNU binutils (`ar`)
 
-On Debian or Ubuntu, the required tools can be installed with:
+On Debian or Ubuntu, install the required tools with:
 
 ```sh
 sudo apt install build-essential nasm
@@ -71,23 +78,69 @@ make bonus
 make test
 ```
 
+### Rebuild everything with the bonus
+
+```sh
+make re
+```
+
 ### Clean generated files
+
+Remove generated object files:
 
 ```sh
 make clean
 ```
 
-To remove generated files and archives completely:
+Remove generated object files and archives:
 
 ```sh
 make fclean
 ```
 
-To rebuild everything, including the bonus library and tests:
+### Other local targets
+
+Format C++ source files:
 
 ```sh
-make re
+make format
 ```
+
+Display all available Makefile targets:
+
+```sh
+make help
+```
+
+## Docker build
+
+### Prerequisites
+
+- Docker
+
+The `Dockerfile` is based on Fedora and installs NASM, `g++`, and GNU Make.
+It copies the project into the image and runs `make bonus` during the image
+build. The resulting image uses `tester_cpp/libasm_tester` as its entrypoint.
+
+### Build the Docker image
+
+From the repository root:
+
+```sh
+make docker
+```
+
+This target first runs `make fclean` locally, then builds the Docker image with
+the bonus library and tester.
+
+### Run the Dockerized tester
+
+```sh
+make test_docker
+```
+
+The tester starts automatically when the container is launched because it is
+the image entrypoint.
 
 ## Technical Stack
 
@@ -96,6 +149,7 @@ make re
 - C++23 for the test infrastructure and support utilities
 - GNU Make for the build system
 - Static archives created with `ar`
+- Docker for the isolated build and test environment
 
 Assembly is used for the functions under evaluation. C++ is used only for the
 test runner and its support utilities, which makes it possible to compare the
@@ -114,6 +168,8 @@ tester_cpp/
 	include/      Test framework and declarations
 	source/       Mandatory and bonus tests
 	README.md     Tester-specific documentation
+Dockerfile        Docker build environment and tester entrypoint
+Makefile		  Root Makefile, general builder and tester
 ```
 
 ## Testing
@@ -128,7 +184,6 @@ tests that may terminate a process are isolated in child processes.
 - [System V AMD64 ABI](https://refspecs.linuxbase.org/elf/x86_64-abi-0.99.pdf)
 - [Linux manual pages](https://man7.org/linux/man-pages/)
 - [C++ reference](https://en.cppreference.com/)
-- 42 `libasm` subject and evaluation guidelines
 
 AI was used to help review test coverage, identify undefined-behavior risks in
 invalid-input tests, improve comments, and organize this documentation.

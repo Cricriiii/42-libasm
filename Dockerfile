@@ -1,12 +1,12 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    Dockerfile.0                                       :+:      :+:    :+:    #
+#    Dockerfile                                         :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
 #    By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/20 14:25:00 by cgajean           #+#    #+#              #
-#    Updated: 2026/09/20 19:54:56 by cgajean          ###   ########.fr        #
+#    Updated: 2026/09/21 11:56:33 by cgajean          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,17 +26,6 @@ COPY tester_cpp /tester_cpp
 COPY Makefile /
 
 # Compile the project
-RUN make bonus
+RUN make bonus CXX=g++ ASM_CMP=nasm
 
-
-# **************************************************************************** #
-# Execute                                                                      #
-# **************************************************************************** #
-
-FROM alpine:3.24.2
-
-RUN apk update && apk add --update gcompat libgcc libstdc++ && rm -rf /var/cache/apk/*
-
-COPY --from=0 /tester_cpp/libasm_tester /bin/
-
-ENTRYPOINT [ "/bin/libasm_tester" ]
+ENTRYPOINT [ "/tester_cpp/libasm_tester" ]
