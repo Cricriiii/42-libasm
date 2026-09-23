@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: cgajean <cgajean@student.42.fr>            +#+  +:+       +#+         #
+#    By: fox <fox@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/13 17:50:35 by fox               #+#    #+#              #
-#    Updated: 2026/09/21 11:59:50 by cgajean          ###   ########.fr        #
+#    Updated: 2026/09/23 22:20:41 by fox              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,15 +27,15 @@ TESTER_RUNNER	:= $(TESTER_CPP_DIR)/libasm_tester
 
 ## Build libasm 'mandatory' archive and tester
 all:
-	+$(MAKE) -C $(LIBASM_DIR) all
-	+$(MAKE) -C $(LIBCPP_DIR) all
-	+$(MAKE) -C $(TESTER_CPP_DIR) all
+	+$(MAKE) -C $(LIBASM_DIR) all -j $(nproc)
+	+$(MAKE) -C $(LIBCPP_DIR) all -j $(nproc)
+	+$(MAKE) -C $(TESTER_CPP_DIR) all -j $(nproc)
 
 ## Build libasm 'bonus' archive and tester
 bonus:
-	+$(MAKE) -C $(LIBASM_DIR) bonus
-	+$(MAKE) -C $(LIBCPP_DIR) all
-	+$(MAKE) -C $(TESTER_CPP_DIR) bonus
+	+$(MAKE) -C $(LIBASM_DIR) bonus -j $(nproc)
+	+$(MAKE) -C $(LIBCPP_DIR) all -j $(nproc)
+	+$(MAKE) -C $(TESTER_CPP_DIR) bonus -j $(nproc)
 
 ## Build the Docker version with bonuses
 docker:
